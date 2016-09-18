@@ -1,0 +1,56 @@
+#+TITLE:     Rich Radke Digital Signal Processing Class
+#+AUTHOR:    Phil Tracton
+#+EMAIL:     ptracton@gmail.com
+#+LANGUAGE:  en
+#+LINK_HOME: https://github.com/ptracton/LearningDSP
+#+STARTUP: showall
+#+LANGUAGE:  en
+#+LaTeX_CLASS: article
+#+latex_header: \usepackage{listings}
+
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:
+
+
+
+
+
+\newpage
+
+#+BEGIN_SRC python :exports code :var fname="contiuous_vs_discrete.png" :results file
+import matplotlib.pyplot as plt
+import numpy as np
+
+n = np.arange(-1.0, 1.0, 0.05)
+x = np.sin(2*np.pi*n)
+
+fig = plt.figure()
+fig.tight_layout()
+axes = fig.add_subplot(1, 1, 1)
+
+plt.figure(1)
+plt.subplot(211)
+plt.plot(n, x)
+
+plt.ylabel('Continuous Data x(t)')
+plt.xlabel('Time t')
+plt.title("Continuous Sine Plot")
+
+
+plt.subplot(212)
+plt.stem(n, x)
+
+ax = plt.gca()
+ax.set_xticklabels([])
+
+plt.ylabel('Discrete Data x[n]')
+plt.xlabel('Data Index n')
+plt.title("Discrete Sine Plot")
+plt.show()
+fig.savefig(fname)
+
+return fname
+#+END_SRC
+
+#+RESULTS:
+file:contiuous_vs_discrete.png

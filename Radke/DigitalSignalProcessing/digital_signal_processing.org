@@ -1,0 +1,169 @@
+#+TITLE:     Rich Radke Digital Signal Processing Class
+#+AUTHOR:    Phil Tracton
+#+EMAIL:     ptracton@gmail.com
+#+LANGUAGE:  en
+#+LINK_HOME: https://github.com/ptracton/LearningDSP
+#+STARTUP: showall
+#+LANGUAGE:  en
+#+LaTeX_CLASS: article
+#+latex_header: \usepackage{listings}
+#+latex_header: \usepackage{fancyhdr}
+#+LATEX: \listoftables
+#+LATEX: \listoffigures
+
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:
+
+
+#+LATEX_HEADER_EXTRA:
+#+DESCRIPTION:
+#+KEYWORDS:
+#+SUBTITLE:
+#+DATE: \today
+
+
+
+\newpage
+* Overview
+
+This document is my note taking process for viewing Rich Radke's Digital Signal Processing class.  It gives me a chance to learn DSP which is the primary goal.  It also allows me to expand my knowledge of Emacs Org mode for taking these notes and Python for writing the code.  \\
+
+\noindent
+The course web site is \href{https://www.ecse.rpi.edu/~rjradke/dspcourse.html}{https://www.ecse.rpi.edu/~rjradke/dspcourse.html}.  
+
+\newpage
+* Course
+
+** Lecture 1
+Signals come from a sensor or other device that samples the world.\\
+
+\noindent
+Systems process the signals to produce a different signal\\
+
+\noindent
+Big disctinction continuous time vs. discrete time.  This class is more about discrete time signals.  \\
+
+\noindent
+Digital signals are only at points where they are measured, there is nothing in between.\\
+
+\noindent
+Only so many bits on the Y axis.  This is quantization.  x number of bits per symbol.\\
+
+#+BEGIN_SRC python :exports code :var fname="continuous_vs_discrete.png" :results file
+import matplotlib.pyplot as plt
+import numpy as np
+
+n = np.arange(-1.0, 1.0, 0.05)
+x = np.sin(2*np.pi*n)
+
+fig = plt.figure()
+axes = fig.add_subplot(1, 1, 1)
+
+plt.figure(1)
+plt.subplot(211)
+plt.plot(n, x)
+
+plt.ylabel('Continuous Data x(t)')
+plt.xlabel('Time t')
+plt.title("Continuous Sine Plot")
+
+
+plt.subplot(212)
+plt.stem(n, x)
+
+ax = plt.gca()
+ax.set_xticklabels([])
+
+plt.ylabel('Discrete Data x[n]')
+plt.xlabel('Data Index n')
+plt.title("Discrete Sine Plot")
+fig.tight_layout()
+plt.show()
+fig.savefig(fname)
+
+return fname
+#+END_SRC
+
+#+RESULTS:
+file:continuous_vs_discrete.png
+
+
+
+
+\noindent
+Flipping  flip samples around Y axis.  want to see x[-n]
+
+#+BEGIN_SRC python :exports both :var fname="flipping.png" :results file
+import matplotlib.pyplot as plt
+import numpy as np
+
+def f(data):
+    return np.sin(2*np.pi*data)
+
+n = t = np.arange(-1.0, 1.0, 0.05)
+x = np.sin(2*np.pi*n)
+
+fig = plt.figure()
+axes = fig.add_subplot(1, 1, 1)
+
+plt.figure(1)
+plt.subplot(211)
+plt.stem(n, f(n))
+
+plt.ylabel('Discrete Data x[n]')
+plt.xlabel('Data Index n')
+plt.title("Sine Plot")
+
+
+plt.subplot(212)
+plt.stem(n, f(-1*n))
+
+ax = plt.gca()
+ax.set_xticklabels([])
+
+plt.ylabel('Discrete Data x[-1*n]')
+plt.xlabel('Data Index n')
+plt.title("Flipped Sine Plot")
+fig.tight_layout()
+plt.show()
+fig.savefig(fname)
+
+#+END_SRC
+#+RESULTS:
+file:flipping.png
+
+
+#+BEGIN_COMMENT
+Scaling (DRAW PICTURE), x[2n] playing twice as fast, duration should be cut in half.  DSP loses information, throw aways samples in between and they can not be recovered.
+x[n/3] is slowing signal by 3 so duration increases.  Nothing to put into extra locations.  Want to smoothly interpolate between points.
+
+Shifting (DRAW PICTURE) x[n-n0] move by an integral amount.  x[n-1] shifts by 1 to the right it is a measure of DELAY!
+
+
+x[-2n+3] must be done in order, SHIFT, FLIP, SCALE (DRAW PICTURES OF THESE)
+z[n] = x[n+3]  SHIFT
+w[n] = z[-n]   FLIP
+y[n] = w[2n]   SCALE
+y[2] = x[-1]
+y[1] = x[1]
+
+EVEN x[n]=x[-n]  (DRAW PICTURE)
+ODD  x[n]=-x[-n] (DRAW PICTURE), middle entry has to be 0 x[0] = -x[0]
+Every signal has even and odd parts.
+EV(x[n]) = 1/2 (x[n] + x[-n])
+OD(x[n]) = 1/2 (x[n] - x[-n])
+DO THE MATLAB IN PYTHON
+
+Periodicity x[n] = x[n+N], signal repeats after so many steps
+Constant signal has N = 1
+
+Special Signals
+Delta Function  \delta[n] = 1 for n=0 and 0 for n !=0 (DRAW PICTURE)
+
+Unit Step Function u[n] = 1 n>=0, 0 n<0 (DRAW PICTURE)
+Step could be a bunch of deltas
+u[n] = \delta[n]+\delta[n-1] +\delta[n-2]  + ... = \sum_{k=0}_{\infinity}\delta[n-k]
+From 0 not -\infinty since delta is 0 before 
+
+WATCHED first 30 minutes
+#+END_COMMENT

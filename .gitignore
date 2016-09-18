@@ -87,3 +87,16 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Emacs
+*~
+
+# Images
+*png
+
+# LaTeX
+*.lof
+*.pdf
+*.tex
+*.lot
+/auto/
