@@ -1,0 +1,6 @@
+* Chapter 1 -- The Breadth and Depth of DSP
+
+These are my personal notes from learning DSP using [[http://www.dspguide.com/][The Scientists and Engineers Guide to Digital Signal Processing]], Second Edition.  \\
+
+
+The first chapter goes over the history and where you can find use for DSP work.  The book writes some psuedo-code in a "BASIC" like language.  I will be attempting to move it over to Python.  Matlab would be better but I don't have it.  
