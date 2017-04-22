@@ -1,6 +1,6 @@
 #+LaTex_HEADER: \usepackage{listings}
 
-* Chapter 2 -- Statistics, Probability and Noise
+* Statistics, Probability and Noise
 ** Signals and Graph Terminology
 *** Definitions
 - \textbf{Signal} is how one parameter is related to another parameter
@@ -18,7 +18,7 @@
 \begin{center} $$\mu = \frac{1}{N}\sum_{i=1}^{N-1}x_{i}$$ \end{center}
 
 \begin{python}
-   def mean(self):
+   def Mean(self):
         """
         Calculate the mean of a list of values.
         The self.samples list should be set when instantiating
@@ -102,9 +102,26 @@ $$
         return mean, variance, std
 \end{python}
 
+- In some situations mean decribes what is being measured and standard deviation measures noise
+- \textbf{Signal to Noise Ration (SNR)} is a comparison of mean to standard deviation
+\begin{center}
+$$
+SNR = \frac{\mu}{\sigma}
+$$
+\end{center}
 
+- \textbf{Coefficient of Variance (CV)} is the standard deviation divided by the mean and multiplied by 100%.
+\begin{center}
+$$
+CV = \frac{\sigma}{\mu} * 100\%
+$$
+\end{center}
+
+- High SNR and Low CV is a good signal!
 
 ** Signal vs. Underlying Process
+- \textbf{Statistics} is the science of interpreting numerical data 
+- \textbf{Probability} is used in DSP to understand the process that generated the signals
 ** The Histogram, PMF and PDF
 ** The Normal Distribution
 ** Digital Noise Generation

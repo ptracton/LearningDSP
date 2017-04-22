@@ -70,3 +70,19 @@ class DSP():
             print("RunningStatistics: Mean {} Variance {} STD {}".format(
                 mean, variance, std))
         return mean, variance, std
+
+    def SNR(self):
+        """
+        Calculate the Signal to Noise Ratio based on the
+        already stored self.samples list
+        """
+        SNR = self.Mean()/self.StandardDeviation()
+        return SNR
+
+    def CV(self):
+        """
+        Calculate the Signal to Coefficient of Variation
+        based on the already stored self.samples list
+        """
+        CV = (self.StandardDeviation()/self.Mean()) * 100
+        return CV

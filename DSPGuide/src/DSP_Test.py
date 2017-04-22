@@ -17,4 +17,5 @@ if __name__ == "__main__":
     print("StandardDeviation {} ".format(dsp.StandardDeviation()))
     print("Variance {} ".format(dsp.Variance()))
     mean, variance, std = dsp.RunningStatistics()
-    
+    print("SNR: {}".format(dsp.SNR()))
+    print("CV: {}".format(dsp.CV()))

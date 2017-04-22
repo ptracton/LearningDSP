@@ -33,7 +33,7 @@
 #+LaTex_HEADER: otherkeywords={self},             % Add keywords here
 #+LaTex_HEADER: keywordstyle=\ttb\color{deepblue},
 #+LaTeX_HEADER: numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
-#+LaTex_HEADER: emph={DSP,__init__, Mean, StandardDeviation, Variance},          % Custom highlighting
+#+LaTex_HEADER: emph={DSP,__init__, Mean, StandardDeviation, Variance, RunningStatistics},          % Custom highlighting
 #+LaTex_HEADER: emphstyle=\ttb\color{deepred},    % Custom highlighting style
 #+LaTex_HEADER: stringstyle=\color{deepgreen},
 #+LaTex_HEADER: frame=tb,                         % Any extra options here
@@ -67,11 +67,15 @@
 \newpage
 
 
-%#+INCLUDE: "../Chapter01/chapter01.org"
+#+INCLUDE: "../Chapter01/chapter01.org"
 \newpage
 #+INCLUDE: "../Chapter02/chapter02.org"
 \newpage
-%#+INCLUDE: "../Chapter03/chapter03.org"
+#+INCLUDE: "../Chapter03/chapter03.org"
 \newpage
 * Appendix A -- Code Listing
+** DSP Source Code
 \pythonexternal{"../src/DSP.py"}
+\newpage
+** DSP Test Code
+\pythonexternal{"../src/DSP_Test.py"}

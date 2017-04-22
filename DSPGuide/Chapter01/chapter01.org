@@ -1,4 +1,4 @@
-* Chapter 1 -- The Breadth and Depth of DSP
+* The Breadth and Depth of DSP
 
 These are my personal notes from learning DSP using [[http://www.dspguide.com/][The Scientists and Engineers Guide to Digital Signal Processing]], Second Edition.  \\
 
