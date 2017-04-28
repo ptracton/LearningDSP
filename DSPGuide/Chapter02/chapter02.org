@@ -122,7 +122,30 @@ $$
 ** Signal vs. Underlying Process
 - \textbf{Statistics} is the science of interpreting numerical data 
 - \textbf{Probability} is used in DSP to understand the process that generated the signals
+- \textbf{Statistical Variation or Fluctuation or Noise} is random irregularity found in actual data
+- \textbf{Typical Error} is the standard deviation over the square root of the number of samples.  For small N, expect a large error. As N grows larger the error should be shrinking.
+\begin{center}
+$$
+Typical Error = \frac{\sigma}{N^\frac{1}{2}}
+$$
+\end{center}
+
+\begin{python}
+    def TypicalError(self):
+        """
+        Calculate the Typical Error based on the already stored
+        self.samples and the StandardDeviation
+        """
+        error = self.StandardDeviation/math.pow(len(self.samples), 0.5)
+        return error
+\end{python}
+
+- \textbf{Strong Law of Large Numbers} guarantees that the error becomes zero as N approaches infinity.
+- The Standard Deviation equation measures the value of the underlying process, not the actual signal.  Divide through by N to get the value of the signal.
+- \textbf{Non Stationary} processes that change their underlying behavior.  This causes a slowly changing mean and standard deviation.  
 ** The Histogram, PMF and PDF
+- \textbf{Histogram} displays the number of samples there are in the signal at this value or range of values.
+- 
 ** The Normal Distribution
 ** Digital Noise Generation
 ** Precision and Accuracy

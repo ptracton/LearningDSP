@@ -1,7 +1,9 @@
 #! /usr/bin/env python3
 
 import math
-
+import numpy as np
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
 
 class DSP():
     """
@@ -86,3 +88,36 @@ class DSP():
         """
         CV = (self.StandardDeviation()/self.Mean()) * 100
         return CV
+
+    def TypicalError(self):
+        """
+        Calculate the Typical Error based on the already stored
+        self.samples and the StandardDeviation
+        """
+        error = self.StandardDeviation()/math.pow(len(self.samples), 0.5)
+        return error
+
+    def Histogram(self, image_name=None):
+        """
+        Produce a histogram of the self.samples and store
+        the plot in image_name
+        """
+
+        mu, sigma = 100, 15
+        x = mu + sigma*np.random.randn(100)
+
+        # the histogram of the data
+        n, bins, patches = plt.hist(x, 50, normed=1,
+                                    facecolor='green', alpha=0.75)
+
+        # add a 'best fit' line
+        y = mlab.normpdf(bins, mu, sigma)
+        plt.plot(bins, y, 'r--', linewidth=1)
+
+        plt.xlabel('Smarts')
+        plt.ylabel('Probability')
+        plt.title(r'$\mathrm{Histogram\ of\ IQ:}\ \mu=100,\ \sigma=15$')
+        plt.axis([40, 160, 0, 0.03])
+        plt.grid(True)
+
+        plt.savefig(image_name, bbox_inches='tight')
