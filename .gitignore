@@ -102,3 +102,6 @@ ENV/
 /auto/
 *.el
 *.dvi
+*.bbl
+*.lol
+_minted*

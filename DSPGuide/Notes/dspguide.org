@@ -1,65 +1,12 @@
 #+TITLE:     DSP For Scientists and Engineers Notes
 #+AUTHOR:    Philip Tracton
 #+EMAIL:     ptracton@gmail.com
-#+OPTIONS:   H:5 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
-#+LATEX_CLASS: article
-#+LaTeX_CLASS_OPTIONS: [letterpaper]
-#+LaTeX_HEADER: \usepackage{hyperref}
-#+LaTeX_HEADER: \hypersetup{
-#+LaTeX_HEADER:     colorlinks,
-#+LaTeX_HEADER:     citecolor=blue,
-#+LaTeX_HEADER:     filecolor=blue,
-#+LaTeX_HEADER:     linkcolor=blue,
-#+LaTeX_HEADER:     urlcolor=blue
-#+LaTeX_HEADER: }
-#+LaTex_HEADER: % Default fixed font does not support bold face
-#+LaTex_HEADER: \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{10} % for bold
-#+LaTex_HEADER: \DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{10}  % for normal
+#+OPTIONS: toc:3          only inlcude two levels in TOC
+#+OPTIONS: toc:nil        no default TOC at all
 
-#+LaTex_HEADER: % Custom colors
-#+LaTex_HEADER: \usepackage{color}
-#+LaTex_HEADER: \definecolor{deepblue}{rgb}{0,0,0.5}
-#+LaTex_HEADER: \definecolor{deepred}{rgb}{0.6,0,0}
-#+LaTex_HEADER: \definecolor{deepgreen}{rgb}{0,0.5,0}
-#+LaTex_HEADER: \definecolor{UCLABlue}{RGB}{83, 104, 149}
-#+LaTex_HEADER: \definecolor{UCLAGold}{RGB}{254, 187, 54}
-
-#+LaTex_HEADER: \usepackage{listings}
-
-#+LaTex_HEADER: % Python style for highlighting
-#+LaTex_HEADER: \newcommand\pythonstyle{\lstset{
-#+LaTex_HEADER: language=Python,
-#+LaTex_HEADER:   basicstyle=\footnotesize,        % the size of the fonts that are used for the code
-#+LaTex_HEADER: otherkeywords={self},             % Add keywords here
-#+LaTex_HEADER: keywordstyle=\ttb\color{deepblue},
-#+LaTeX_HEADER: numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
-#+LaTex_HEADER: emph={DSP,__init__, Mean, StandardDeviation, Variance, RunningStatistics},          % Custom highlighting
-#+LaTex_HEADER: emphstyle=\ttb\color{deepred},    % Custom highlighting style
-#+LaTex_HEADER: stringstyle=\color{deepgreen},
-#+LaTex_HEADER: frame=tb,                         % Any extra options here
-#+LaTex_HEADER: showstringspaces=false            % 
-#+LaTex_HEADER: }}
-
-
-#+LaTex_HEADER: % Python environment
-#+LaTex_HEADER: \lstnewenvironment{python}[1][]
-#+LaTex_HEADER: {
-#+LaTex_HEADER: \pythonstyle
-#+LaTex_HEADER: \lstset{#1}
-#+LaTex_HEADER: }
-#+LaTex_HEADER: {}
-
-#+LaTex_HEADER: % Python for external files
-#+LaTex_HEADER: \newcommand\pythonexternal[2][]{{
-#+LaTex_HEADER: \pythonstyle
-#+LaTex_HEADER: \lstinputlisting[#1]{#2}}}
-
-#+LaTex_HEADER: % Python for inline
-#+LaTex_HEADER: \newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
-#+LaTex_HEADER: \DeclareMathSizes{12}{30}{16}{12}
-
-\clearpage
-#+OPTIONS: toc:3
+\maketitle
+\newpage
+ #+TOC: headlines 3
 \newpage
 #+TOC: listings           build a list of listings
 \newpage

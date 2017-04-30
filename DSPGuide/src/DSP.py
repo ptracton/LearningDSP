@@ -5,12 +5,13 @@ import numpy as np
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
+
 class DSP():
     """
     DSP Demonstration class that implements the code
     from DSP For Scientists and Engineers, Second Edition
     """
-    
+
     def __init__(self, samples=None):
         """
         """

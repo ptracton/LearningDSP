@@ -15,55 +15,83 @@
 ** Mean and Standard Deviation
 *** Mean
 - \textbf{Mean} \mu is the average of the signal.  Add all samples together and divide by N. In electronics this is the DC (direct current) value.
-\begin{center} $$\mu = \frac{1}{N}\sum_{i=1}^{N-1}x_{i}$$ \end{center}
 
-\begin{python}
-   def Mean(self):
-        """
-        Calculate the mean of a list of values.
-        The self.samples list should be set when instantiating
-        this instance.
-        """
-        mean = 0
-        for x in self.samples:
-            mean = mean + x
-        mean = mean/len(self.samples)
-        return mean
-\end{python}
+$$\mu = \frac{1}{N}\sum_{i=1}^{N-1}x_{i}$$
 
+#+BEGIN_SRC python :session :results output
+import random
+samples = random.sample(range(1, 101), 10)
+def Mean(data=None):
+    """
+    Calculate the mean of a list of values.
+    """
+    if data is None:
+        return
+    mean = 0
+    for x in data:
+       mean = mean + x
+       mean = mean/len(data)
+    return mean
+
+samples
+
+Mean(samples)
+
+#+END_SRC
+
+#+RESULTS: 
+: [78, 83, 38, 63, 35, 55, 82, 99, 7, 43]
+: 4.4777917708
 
 *** Standard Deviation and Variance
 - \textbf{Average Deviation} is not commonly used.  Sums up all the deviations, from the mean, for each sample and divided by the number of samples.  Use absolute values for deviation otherwise differences could cancel out.
 - \textbf{Standard Deviation} averages the power.  This is the AC portion of the signal.  
-\begin{center} $$\sigma = \sqrt{\frac{1}{N-1}\sum_{i=1}^{N-1} (x_{i} - \mu)^{2}}$$ \end{center}
+$$\sigma = \sqrt{\frac{1}{N-1}\sum_{i=1}^{N-1} (x_{i} - \mu)^{2}}$$ 
 
-\begin{python}
-    def StandardDeviation(self):
-        """
-        Calculate the standard deviation of a list of values.
-        The self.samples list should be set when instantiating
-        this instance.
-        """
-        mean = self.Mean()
-        std = 0.0
-        for x in self.samples:
-            std = std + math.pow((x - mean), 2)
-        std = std / (len(self.samples) - 1)
+#+BEGIN_SRC python :session :results output
+import math
+def StandardDeviation(samples):
+    """
+    Calculate the standard deviation of a list of values.
+    Uses the Mean method from previous examples
+    """
+    mean = Mean(samples)
+    std = 0.0
+    for x in samples:
+        std = std + math.pow((x - mean), 2)
+        std = std / (len(samples) - 1)
         std = math.sqrt(std)
-        return std
-\end{python}
+    return std
+
+samples
+
+StandardDeviation(samples)
+#+END_SRC
+
+#+RESULTS: 
+: [78, 83, 38, 63, 35, 55, 82, 99, 7, 43]
+: 12.849613134796984
+
+
 
 - \textbf{Variance}  is commonly used in statistics.  Notice variance and standard deviation both divide by N-1, not N!  
 \begin{center} $$\sigma^{2} = \frac{1}{N-1}\sum_{i=1}^{N-1} (x_{i} - \mu)^{2}$$ \end{center}
-\begin{python}
-    def Variance(self):
-        """
-        Calculate the variance of a list of values.
-        The self.samples list should be set when instantiating
-        this instance.
-        """
-        return math.pow(self.StandardDeviation(), 2)
-\end{python}
+#+BEGIN_SRC python :session :results output
+
+def Variance(samples):
+    """
+    Calculate the variance of a list of values.
+    """
+    return math.pow(StandardDeviation(samples), 2)
+
+samples
+
+Variance(samples)
+#+END_SRC
+
+#+RESULTS: 
+: [78, 83, 38, 63, 35, 55, 82, 99, 7, 43]
+: 165.11255771394718
 
 - \textbf{Root Mean Square (rms)} measures both the AC and DC components.
 \begin{center} $$x_{rms} = \sqrt{\frac{1}{N}\sum_{i=0}^{N-1} (x_{i})^{2}}$$ \end{center}
@@ -77,30 +105,7 @@ $$
 $$
 \end{center}
 
-\begin{python}
 
-    def RunningStatistics(self):
-        """
-        Calculate the mean, variance and std while running through a list of
-        values. The self.samples list should be set when instantiating
-        this instance.
-        """
-        mean = 0
-        variance = 0
-        std = 0
-        temp_sum = 0
-        sum_squares = 0
-        N = len(self.samples)
-        for x in self.samples:
-            temp_sum = temp_sum + x
-            sum_squares = sum_squares + math.pow(x, 2)
-            mean = temp_sum/N
-            variance = (sum_squares - (math.pow(temp_sum, 2)/N)) / (N - 1)
-            std = math.sqrt(variance)
-            print("RunningStatistics: Mean {} Variance {} STD {}".format(
-                mean, variance, std))
-        return mean, variance, std
-\end{python}
 
 - In some situations mean decribes what is being measured and standard deviation measures noise
 - \textbf{Signal to Noise Ration (SNR)} is a comparison of mean to standard deviation
@@ -130,15 +135,6 @@ Typical Error = \frac{\sigma}{N^\frac{1}{2}}
 $$
 \end{center}
 
-\begin{python}
-    def TypicalError(self):
-        """
-        Calculate the Typical Error based on the already stored
-        self.samples and the StandardDeviation
-        """
-        error = self.StandardDeviation/math.pow(len(self.samples), 0.5)
-        return error
-\end{python}
 
 - \textbf{Strong Law of Large Numbers} guarantees that the error becomes zero as N approaches infinity.
 - The Standard Deviation equation measures the value of the underlying process, not the actual signal.  Divide through by N to get the value of the signal.
