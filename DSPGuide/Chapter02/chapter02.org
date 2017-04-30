@@ -20,7 +20,7 @@ $$\mu = \frac{1}{N}\sum_{i=1}^{N-1}x_{i}$$
 
 #+BEGIN_SRC python :session :results output
 import random
-samples = random.sample(range(1, 101), 10)
+samples = random.sample(range(1, 101), 20)
 def Mean(data=None):
     """
     Calculate the mean of a list of values.
@@ -94,33 +94,113 @@ Variance(samples)
 : 165.11255771394718
 
 - \textbf{Root Mean Square (rms)} measures both the AC and DC components.
-\begin{center} $$x_{rms} = \sqrt{\frac{1}{N}\sum_{i=0}^{N-1} (x_{i})^{2}}$$ \end{center}
+$$x_{rms} = \sqrt{\frac{1}{N}\sum_{i=0}^{N-1} (x_{i})^{2}}$$ 
+
+#+BEGIN_SRC python :session :results output
+def RootMeanSquare(samples):
+    """
+    Calculate the Root Mean Square of an input list
+    """
+    rms = 0
+    N = len(samples)
+    for x in range(N-1):
+        square = samples[x] * samples[x]
+    divide = square/N
+    rms = math.sqrt(divide)
+    return rms
+
+samples
+
+RootMeanSquare(samples)
+#+END_SRC
+
+#+RESULTS:
+: [68, 39, 32, 40, 74, 42, 12, 62, 66, 16]
+: 20.871032557111302
 
 *** Running Statistics
 - \textbf{Running Statistics} is often needed.  In this situation we want to recompute mean and standard deviation of new signal added in without redoing all of the calculations
 
-\begin{center}
 $$
 \sigma^{2} = \frac{1}{N-1} ( \sum_{i=0}^{N-1}(x_{i})^2 - \frac{1}{N}(\sum_{i=0}^{N-1} x_{i})^2)
 $$
-\end{center}
 
 
+#+BEGIN_SRC python :session :results output
+def RunningStatistics(samples):
+    """
+    Calculate the mean, variance and std while running through a list of
+    values. The self.samples list should be set when instantiating
+    this instance.
+    """
+    mean = 0
+    variance = 0
+    std = 0
+    temp_sum = 0
+    sum_squares = 0
+    N = len(samples)
+    for x in samples:
+        temp_sum = temp_sum + x
+        sum_squares = sum_squares + math.pow(x, 2)
+        mean = temp_sum/N
+        variance = (sum_squares - (math.pow(temp_sum, 2)/N)) / (N - 1)
+        std = math.sqrt(variance)
+    return mean, variance, std    
+
+samples
+
+RunningStatistics(samples)
+#+END_SRC
+
+#+RESULTS:
+: [92, 65, 22, 1, 39, 57, 73, 28, 95, 21]
+: (49.3, 1024.2333333333331, 32.003645625667914)
 
 - In some situations mean decribes what is being measured and standard deviation measures noise
 - \textbf{Signal to Noise Ration (SNR)} is a comparison of mean to standard deviation
-\begin{center}
+
 $$
 SNR = \frac{\mu}{\sigma}
 $$
-\end{center}
+#+BEGIN_SRC python :session :results output
+def SNR(samples):
+    """
+    Calculate the Signal to Noise Ratio 
+    """
+    SNR = Mean(samples)/StandardDeviation(samples)
+    return SNR
+
+samples
+
+SNR(samples)
+#+END_SRC
+
+#+RESULTS:
+: [100, 33, 43, 22, 72, 5, 6, 46, 95, 48]
+: 0.4086576025773104
 
 - \textbf{Coefficient of Variance (CV)} is the standard deviation divided by the mean and multiplied by 100%.
-\begin{center}
+
 $$
 CV = \frac{\sigma}{\mu} * 100\%
 $$
-\end{center}
+#+BEGIN_SRC python :session :results output
+
+def CV(samples):
+    """
+    Calculate the Signal to Coefficient of Variation
+    """
+    CV = (StandardDeviation(samples)/Mean(samples)) * 100
+    return CV
+
+samples
+
+CV(samples)
+#+END_SRC
+
+#+RESULTS:
+: [100, 33, 43, 22, 72, 5, 6, 46, 95, 48]
+: 244.70363299085295
 
 - High SNR and Low CV is a good signal!
 
@@ -129,11 +209,9 @@ $$
 - \textbf{Probability} is used in DSP to understand the process that generated the signals
 - \textbf{Statistical Variation or Fluctuation or Noise} is random irregularity found in actual data
 - \textbf{Typical Error} is the standard deviation over the square root of the number of samples.  For small N, expect a large error. As N grows larger the error should be shrinking.
-\begin{center}
 $$
 Typical Error = \frac{\sigma}{N^\frac{1}{2}}
 $$
-\end{center}
 
 
 - \textbf{Strong Law of Large Numbers} guarantees that the error becomes zero as N approaches infinity.
