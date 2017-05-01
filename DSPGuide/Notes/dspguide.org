@@ -20,9 +20,3 @@
 \newpage
 #+INCLUDE: "../Chapter03/chapter03.org"
 \newpage
-* Appendix A -- Code Listing
-** DSP Source Code
-\pythonexternal{"../src/DSP.py"}
-\newpage
-** DSP Test Code
-\pythonexternal{"../src/DSP_Test.py"}

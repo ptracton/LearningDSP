@@ -40,8 +40,12 @@ Mean(samples)
 #+END_SRC
 
 #+RESULTS: 
-: [78, 83, 38, 63, 35, 55, 82, 99, 7, 43]
-: 4.4777917708
+: Python 3.4.5 |Anaconda custom (64-bit)| (default, Jul  2 2016, 17:47:47) 
+: [GCC 4.4.7 20120313 (Red Hat 4.4.7-1)] on linux
+: Type "help", "copyright", "credits" or "license" for more information.
+: python.el: native completion setup loaded
+: [35, 76, 71, 9, 3, 96, 89, 50, 17, 14, 67, 33, 10, 45, 91, 79, 90, 26, 59, 27]
+: 1.5013386449929442
 
 *** Standard Deviation and Variance
 - \textbf{Average Deviation} is not commonly used.  Sums up all the deviations, from the mean, for each sample and divided by the number of samples.  Use absolute values for deviation otherwise differences could cancel out.
@@ -69,8 +73,8 @@ StandardDeviation(samples)
 #+END_SRC
 
 #+RESULTS: 
-: [78, 83, 38, 63, 35, 55, 82, 99, 7, 43]
-: 12.849613134796984
+: [35, 76, 71, 9, 3, 96, 89, 50, 17, 14, 67, 33, 10, 45, 91, 79, 90, 26, 59, 27]
+: 5.908888150427693
 
 
 
@@ -90,8 +94,8 @@ Variance(samples)
 #+END_SRC
 
 #+RESULTS: 
-: [78, 83, 38, 63, 35, 55, 82, 99, 7, 43]
-: 165.11255771394718
+: [35, 76, 71, 9, 3, 96, 89, 50, 17, 14, 67, 33, 10, 45, 91, 79, 90, 26, 59, 27]
+: 34.9149591742648
 
 - \textbf{Root Mean Square (rms)} measures both the AC and DC components.
 $$x_{rms} = \sqrt{\frac{1}{N}\sum_{i=0}^{N-1} (x_{i})^{2}}$$ 
@@ -115,8 +119,8 @@ RootMeanSquare(samples)
 #+END_SRC
 
 #+RESULTS:
-: [68, 39, 32, 40, 74, 42, 12, 62, 66, 16]
-: 20.871032557111302
+: [35, 76, 71, 9, 3, 96, 89, 50, 17, 14, 67, 33, 10, 45, 91, 79, 90, 26, 59, 27]
+: 13.192801067248759
 
 *** Running Statistics
 - \textbf{Running Statistics} is often needed.  In this situation we want to recompute mean and standard deviation of new signal added in without redoing all of the calculations
