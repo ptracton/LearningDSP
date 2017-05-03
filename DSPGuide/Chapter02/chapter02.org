@@ -3,18 +3,18 @@
 * Statistics, Probability and Noise
 ** Signals and Graph Terminology
 *** Definitions
-- \textbf{Signal} is how one parameter is related to another parameter
-- \textbf{Continuous Signal} is if BOTH parameters can assume a continuous range
-- \textbf{Discrete Signal} is if BOTH parameters are quantized in some manner
-- \textbf{Time Domain} is if the X axis (the independent variable) is time
-- \textbf{Frequency Domain} is if the X axis (the independent variable) is frequency
+- *Signal* is how one parameter is related to another parameter
+- *Continuous Signal* is if BOTH parameters can assume a continuous range
+- *Discrete Signal* is if BOTH parameters are quantized in some manner
+- *Time Domain* is if the X axis (the independent variable) is time
+- *Frequency Domain* is if the X axis (the independent variable) is frequency
 *** Concepts
 - The two parameters of a signal are not interchangeable
 - The parameter on the Y axis is a function of the one on the X axis
 - Mathematicians tend to do 1-N, everyone else does 0-(N-1)
 ** Mean and Standard Deviation
 *** Mean
-- \textbf{Mean} \mu is the average of the signal.  Add all samples together and divide by N. In electronics this is the DC (direct current) value.
+- *Mean* \mu is the average of the signal.  Add all samples together and divide by N. In electronics this is the DC (direct current) value.
 
 $$\mu = \frac{1}{N}\sum_{i=1}^{N-1}x_{i}$$
 
@@ -40,12 +40,12 @@ Mean(samples)
 #+END_SRC
 
 #+RESULTS: 
-: [78, 83, 38, 63, 35, 55, 82, 99, 7, 43]
-: 4.4777917708
+: [78, 15, 37, 22, 51, 90, 86, 62, 68, 29, 52, 28, 49, 21, 73, 89, 79, 38, 66, 50]
+: 2
 
 *** Standard Deviation and Variance
-- \textbf{Average Deviation} is not commonly used.  Sums up all the deviations, from the mean, for each sample and divided by the number of samples.  Use absolute values for deviation otherwise differences could cancel out.
-- \textbf{Standard Deviation} averages the power.  This is the AC portion of the signal.  
+- *Average Deviation* is not commonly used.  Sums up all the deviations, from the mean, for each sample and divided by the number of samples.  Use absolute values for deviation otherwise differences could cancel out.
+- *Standard Deviation* averages the power.  This is the AC portion of the signal.  
 $$\sigma = \sqrt{\frac{1}{N-1}\sum_{i=1}^{N-1} (x_{i} - \mu)^{2}}$$ 
 
 #+BEGIN_SRC python :session :results output
@@ -74,8 +74,9 @@ StandardDeviation(samples)
 
 
 
-- \textbf{Variance}  is commonly used in statistics.  Notice variance and standard deviation both divide by N-1, not N!  
-\begin{center} $$\sigma^{2} = \frac{1}{N-1}\sum_{i=1}^{N-1} (x_{i} - \mu)^{2}$$ \end{center}
+- *Variance*  is commonly used in statistics.  Notice variance and standard deviation both divide by N-1, not N!  
+$$\sigma^{2} = \frac{1}{N-1}\sum_{i=1}^{N-1} (x_{i} - \mu)^{2}
+
 #+BEGIN_SRC python :session :results output
 
 def Variance(samples):
@@ -93,7 +94,7 @@ Variance(samples)
 : [78, 83, 38, 63, 35, 55, 82, 99, 7, 43]
 : 165.11255771394718
 
-- \textbf{Root Mean Square (rms)} measures both the AC and DC components.
+- *Root Mean Square (rms)* measures both the AC and DC components.
 $$x_{rms} = \sqrt{\frac{1}{N}\sum_{i=0}^{N-1} (x_{i})^{2}}$$ 
 
 #+BEGIN_SRC python :session :results output
@@ -115,11 +116,11 @@ RootMeanSquare(samples)
 #+END_SRC
 
 #+RESULTS:
-: [68, 39, 32, 40, 74, 42, 12, 62, 66, 16]
-: 20.871032557111302
+: [63, 48, 33, 13, 75, 34, 44, 99, 27, 20, 30, 32, 85, 77, 55, 70, 21, 86, 45, 67]
+: 10.04987562112089
 
 *** Running Statistics
-- \textbf{Running Statistics} is often needed.  In this situation we want to recompute mean and standard deviation of new signal added in without redoing all of the calculations
+- *Running Statistics* is often needed.  In this situation we want to recompute mean and standard deviation of new signal added in without redoing all of the calculations
 
 $$
 \sigma^{2} = \frac{1}{N-1} ( \sum_{i=0}^{N-1}(x_{i})^2 - \frac{1}{N}(\sum_{i=0}^{N-1} x_{i})^2)
@@ -157,7 +158,7 @@ RunningStatistics(samples)
 : (49.3, 1024.2333333333331, 32.003645625667914)
 
 - In some situations mean decribes what is being measured and standard deviation measures noise
-- \textbf{Signal to Noise Ration (SNR)} is a comparison of mean to standard deviation
+- *Signal to Noise Ration (SNR)* is a comparison of mean to standard deviation
 
 $$
 SNR = \frac{\mu}{\sigma}
@@ -179,7 +180,7 @@ SNR(samples)
 : [100, 33, 43, 22, 72, 5, 6, 46, 95, 48]
 : 0.4086576025773104
 
-- \textbf{Coefficient of Variance (CV)} is the standard deviation divided by the mean and multiplied by 100%.
+- *Coefficient of Variance (CV)* is the standard deviation divided by the mean and multiplied by 100%.
 
 $$
 CV = \frac{\sigma}{\mu} * 100\%
@@ -199,27 +200,31 @@ CV(samples)
 #+END_SRC
 
 #+RESULTS:
-: [100, 33, 43, 22, 72, 5, 6, 46, 95, 48]
-: 244.70363299085295
+: [10, 74, 92, 51, 76, 25, 52, 22, 9, 49, 61, 40, 62, 28, 87, 63, 26, 81, 71, 3]
+: Traceback (most recent call last):
+:   File "<stdin>", line 1, in <module>
+:   File "<stdin>", line 5, in CV
+: ZeroDivisionError: float division by zero
 
 - High SNR and Low CV is a good signal!
 
 ** Signal vs. Underlying Process
-- \textbf{Statistics} is the science of interpreting numerical data 
-- \textbf{Probability} is used in DSP to understand the process that generated the signals
-- \textbf{Statistical Variation or Fluctuation or Noise} is random irregularity found in actual data
-- \textbf{Typical Error} is the standard deviation over the square root of the number of samples.  For small N, expect a large error. As N grows larger the error should be shrinking.
+- *Statistics* is the science of interpreting numerical data 
+- *Probability* is used in DSP to understand the process that generated the signals
+- *Statistical Variation or Fluctuation or Noise* is random irregularity found in actual data
+- *Typical Error* is the standard deviation over the square root of the number of samples.  For small N, expect a large error. As N grows larger the error should be shrinking.
 $$
 Typical Error = \frac{\sigma}{N^\frac{1}{2}}
 $$
 
 
-- \textbf{Strong Law of Large Numbers} guarantees that the error becomes zero as N approaches infinity.
+- *Strong Law of Large Numbers* guarantees that the error becomes zero as N approaches infinity.
 - The Standard Deviation equation measures the value of the underlying process, not the actual signal.  Divide through by N to get the value of the signal.
-- \textbf{Non Stationary} processes that change their underlying behavior.  This causes a slowly changing mean and standard deviation.  
+- *Non Stationary* processes that change their underlying behavior.  This causes a slowly changing mean and standard deviation.  
 ** The Histogram, PMF and PDF
-- \textbf{Histogram} displays the number of samples there are in the signal at this value or range of values.
+- *Histogram* displays the number of samples there are in the signal at this value or range of values.
 - 
 ** The Normal Distribution
 ** Digital Noise Generation
 ** Precision and Accuracy
+
