@@ -222,7 +222,10 @@ $$
 - The Standard Deviation equation measures the value of the underlying process, not the actual signal.  Divide through by N to get the value of the signal.
 - *Non Stationary* processes that change their underlying behavior.  This causes a slowly changing mean and standard deviation.  
 ** The Histogram, PMF and PDF
-- *Histogram* displays the number of samples there are in the signal at this value or range of values.
+- *Histogram* displays the number of samples there are in the signal at this value or range of values.  
+   - This is formed from the acquired signal and works on a finite number of samples.
+   - Only operates on discrete data
+   - If the number of levels a signal can take are larger than the number of samples, this is a problem!  This happens all the time if you use floating point numbers.
 
 #+NAME: python-histogram
 #+BEGIN_SRC python  :results file
@@ -254,10 +257,66 @@ foo = plt.savefig('../Notes/histogram.png', bbox_inches='tight')
 #+NAME:   fig:HISTOGRAM
 [[file:../Notes/histogram.png]]
 
+Code and example lifted from [[http://matplotlib.org/1.2.1/examples/pylab_examples/histogram_demo.html][Matplotlib Examples]]
 
+- *Probability Mass Function (PMF)* is the corresponding curve for the underlying process.  
+  - This is what the histogram would be with infinite samples.  This means the pmf must be between 0 and 1 with the sum of all values to be equal to 1.  
+  - This describes the /probability/ that a certain value will be generated.
+  - Only operates on discrete data
 
+- *Probability Density Functions (PDF)*  is to continuous signals what the probability mass function is to discrete signals.
+  - The vertical axis is in units of *probability density*
+  - Probability is calculated by multiplying the probability density by the range of values
+  - If the PDF is not constant over a range, the multiplication becomes an integral.
+
+- *Binning* is done by creating arbitrary ranges for the values to be counted in. These are the bins.  The value of the bin is the number of samples in that range.
+  - Too many bins makes it difficult to estimate the amplitude of the PMF
+  - Too few bins makes it difficult to estimate the PMF in the horizontal direction
+  - The number of bins is a trade off of the resolution in X or Y directions.
 
 ** The Normal Distribution
-** Digital Noise Generation
-** Precision and Accuracy
+- *Normal Distribution or Gaussian Distribution* is the bell shaped PDF formed from random signals.
+  + The basic shape of the curve is generated from the /negative squared exponent/
 
+  + You can convert the raw curve with the mean (\mu) and standard deviation (\sigma).  
+  + You also need to normalize the equation so that the are under the curve is equal to 1.
+  + The mean (\mu) centers the curve over a particular value.
+  + The standard deviation (\sigma) controls the width of the bell shape
+  + The sharp drop indicates that the extremes are very rare
+
+$$
+y(x) = e ^{-x^{2}}
+$$
+
+$$
+P(x) = \frac{1}{\sqrt{2\pi}\sigma} e^{-(x-\mu)^{\frac{2}{2\sigma^2}}}
+$$
+
+- *Cumulative Distribution Function (CDF)* is the integral of the PDF.  The Gaussian can not be easily integrated.  Numerical methods are required.  The symbol \Phi(x) is used for this.
+** Digital Noise Generation
+- *Randonm Number Generation* is the heart of digital noise generator.
+- *Central Limit Theorem* the sum of random numbers become normally distributed as more and more random samples are added together.  
+   - The resulting PDF becomes Gaussian.
+   - X is a normally distributed random number.  Requires 2 random numers $R_1$ and $R_2$
+$$
+X = (-2 logR_{1})^{\frac{1}{2}}cos(2\pi R_{2})
+$$
+
+   - *Seed* is the number that the random number generator starts with.  The following equation generates the randomd number based off of the seed.  This allows us to replay a sequence of random numbers.
+
+$$
+R = (aS+b) modulo c
+$$
+
+   - *Psuedo-random* numbers generated this way are not absolutely random since they are based on the previous  value.
+** Precision and Accuracy
+- *Accuracy* is hitting your goal
+   - difference between mean and the actual value
+   - Measure of calibration
+   - If calibration corrects the error it was an accuracy issue
+- *Precision* is performing the same way repeatedly.  
+   - Poor precision results from random errors.
+   - Width of histogram
+   - Measure of random noise
+   - Poor accuracy results from systemic errors
+   - If averaging successive reading provide a better measurement then it was a precision error
