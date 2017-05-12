@@ -130,6 +130,7 @@ fig.savefig(fname)
 
 #+END_SRC
 #+RESULTS:
+[[file:]]
 file:flipping.png
 
 

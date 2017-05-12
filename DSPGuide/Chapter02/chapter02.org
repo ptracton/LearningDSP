@@ -75,7 +75,7 @@ StandardDeviation(samples)
 
 
 - *Variance*  is commonly used in statistics.  Notice variance and standard deviation both divide by N-1, not N!  
-$$\sigma^{2} = \frac{1}{N-1}\sum_{i=1}^{N-1} (x_{i} - \mu)^{2}
+$$\sigma^{2} = \frac{1}{N-1}\sum_{i=1}^{N-1} (x_{i} - \mu)^{2}$$
 
 #+BEGIN_SRC python :session :results output
 
@@ -223,7 +223,40 @@ $$
 - *Non Stationary* processes that change their underlying behavior.  This causes a slowly changing mean and standard deviation.  
 ** The Histogram, PMF and PDF
 - *Histogram* displays the number of samples there are in the signal at this value or range of values.
-- 
+
+#+NAME: python-histogram
+#+BEGIN_SRC python  :results file
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+
+mu, sigma = 100, 15
+x = mu + sigma * np.random.randn(10000)
+
+# the histogram of the data
+n, bins, patches = plt.hist(x, 50, normed=1, facecolor='green', alpha=0.75)
+
+# add a 'best fit' line
+y = mlab.normpdf(bins, mu, sigma)
+l = plt.plot(bins, y, 'r--', linewidth=1)
+
+foo = plt.xlabel('Smarts')
+foo = plt.ylabel('Probability')
+foo = plt.title(r'$\mathrm{Histogram\ of\ IQ:}\ \mu=100,\ \sigma=15$')
+foo = plt.axis([40, 160, 0, 0.03])
+foo = plt.grid(True)
+foo = plt.savefig('../Notes/histogram.png', bbox_inches='tight')
+#+END_SRC
+
+#+CAPTION: Histogram graph example
+#+NAME:   fig:HISTOGRAM
+[[file:../Notes/histogram.png]]
+
+
+
+
 ** The Normal Distribution
 ** Digital Noise Generation
 ** Precision and Accuracy

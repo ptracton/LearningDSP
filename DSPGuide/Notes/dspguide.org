@@ -3,15 +3,13 @@
 #+EMAIL:     ptracton@gmail.com
 #+OPTIONS: toc:3          only inlcude two levels in TOC
 #+OPTIONS: toc:nil        no default TOC at all
+#+LATEX_HEADER: \usepackage{graphicx}
 
 \maketitle
 \newpage
  #+TOC: headlines 3
 \newpage
-#+TOC: listings           build a list of listings
-\newpage
-#+TOC: tables             build a list of tables
-\newpage
+
 
 
 #+INCLUDE: "../Chapter01/chapter01.org"
