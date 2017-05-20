@@ -1,10 +1,154 @@
 * ADC and DAC
-** Definitions
-** Concepts
 ** Quantization
++ Analog to digital conversion is usually done in 2 steps.  
+  - *Sample and Hold (S/H)* keeps the voltage constant for the actual ADC conversion.  This value is only allowed to change at periodic intervals.  Changes to the input inbetween these periods is ignored!  
+  - *Analog to Digital Conversion (ADC)* converts analog level to digital value
++ *Sampling* converts the independent variable (time) from continuous to discrete
++ *Quantization* converts the dependent variable (voltage or other input signal) from continuous to discrete.  Small changes in between samples can be lost.  Errors here appear like random noise.  In most cases, quantization is adding in a specific amount of random noise to the signal.  Random noise signals are combined by adding their /variances/. The number of bits determines the precision of the data.  This error /should/ be small.  Small changes in amplitude can be lost.
++ It is important to keep sampling and quantization separate and analyze them that way since they degrade the signal in different ways
++ Any digitized sample can have a maximum error of $\pm \frac{1}{2}$ *LSB (Least Significant Bit)*  This is the distance between 2 adjacent quantization levels.
++ When figuring out how many bits are needed ask 2 questions
+  - How much noise is already present in the signal?
+  - How much noise can be tolerated in the signal?
++ If the signal is very slow moving, the error can not be treated as random since the value presented to the ADC will be constant for long periods.  It makes the output seem stuck.
++ *Dithering* common technique for improving the digitization of slow moving signals.  Even if the signal is moving by less than  $\pm \frac{1}{2}$ LSB the added noise causes the output to randomly toggle between 2 adjacent levels.  Even though a single measurement has the inherent limit of  $\pm \frac{1}{2}$ LSB the statistics of large number of samples can do better.  Adding noise can provide more information.  These circuits can be quite elaborate.  
 ** The Sampling Theorem
+- *Proper Sampling* is when you can reconstruct the analog signal from the samples exactly.  The samples need to be a unique representation of the analog signal.  Too low of a sampling rate can lead to improper sampling.
+- *Aliasing* happens when sinusoids change frequency when sampling. This makes an unambiguous recreation of the signal impossible.  This is improper sampling.  Aliasing can loose information about both the high and low frequencies.  It can also change the phase of the signal.  Can either phase shift 0 or 180 degrees.
+- *Sampling Theorem* /Shannon/ or /Nyquist/ sampling states that a continuous signal can be properly sampled only if it does not contain frequency components above one half of the sampling rate.  /EX/ a sampling rate of 2000 samples/second requires the analog signal to be made of signals less than 1000 samples/second
+- *Nyquist Sampling* and *Nyquist rate* are not standardized terms.
+- When the continuous signal is above one half of the sampling rate /aliasing/ changes the frequency into something that /can/ be represented by the data.  
+- *Impulse Train* each impulse is infinitely narrow and the value between each one is 0.  This is a theoretical concept only.  It can be treated as an continuous signal and has identical content to the digital signal.  
+- Every waveform can be viewed as being composed of sinusoids of varying frequency and amplitudes.
+- *Upper Sideband* is a copy of the multiple of the original frequency spectrum
+- *Lower Sideband* is a left or right flipperd copy of the original frequency spectrum.
 ** Digital to Analog Conversion
+- *Zeroth Order Hold* - Nearly all DACs operate by holding the last value until another sample is received.  This is the DAC equivalent of Sample and Hold.
+- *Sinc Function*  In the frequency domain the zeroth order hold results in the impulse train being multiplied by the following.  
+$$
+H(f) = \left{|} \frac{sin(\frac{\pi f}{f_{s}})}{\frac{\pi f}{f}} \right{|}
+$$
+- The zeroth order hold can be understood as the convolution of the impulse train with the rectangular pulse  with a width equal to the sampling period.
+- Analog filter that does this needs to remove all frequency components above one half of the sampling rate and boost the frequencies of the reciprocal of the zeroth order hold's effect $\frac{1}{sinc(x)}$
+- Analog signals suffer from the same limitations (noise and bandwidth) as digital signals
 ** Analog Filters for Data Conversion
+
+
+#+BEGIN_SRC dot :file ../Notes/dot_success.png :cmdline -Kdot -Tpng
+  digraph {
+  // graph from left to right
+  rankdir=LR;
+  splines=true;
+  node [shape=box]; 
+  AnalogFilter1 [label="Anti-Alias Analog Filter"]
+  ADC [label="ADC"]
+  DSP [label="DSP"]
+  DAC [label="DAC"]
+  AnalogFilter2 [label="Reconstruction Filter"]
+  AnalogFilter1 -> ADC
+  ADC -> DSP
+  DSP -> DAC
+  DAC -> AnalogFilter2
+  }
+#+END_SRC
+
+
+#+RESULTS:
+[[file:../Notes/dot_success.png]]
+
 ** Selecting the Anti-Alias Filter
+- *Antialiase Filter* This is an analog low pass filter designed to remove all frequencies above the nyquist frequency.
+- *Reconstruction Filter* This is the output filter for a DAC and may include zeroth order hold filter and frequency boost.
+- Filter complexity can be adjusted by number of *poles* and *zeros*.  More poles is more complicated electronics but better performance.
+- Three types of analog filters are commonly used.  Each is designed to optimze a different design parameter.
+  + *Chebyshev*
+  + *Butterworth*
+  + *Bessel or Thompson*
+
+#+BEGIN_SRC latex
+\begin{tikzpicture}[scale=2]
+  \draw[color=black, thick]
+    (0,0) to [short,o-] (6,0){} % Baseline for connection to ground
+    % Input and ground
+    (0,1) node[]{\large{\textbf{INPUT}}}
+    % Connection of passive components
+    (5,0) node[ground]{} node[circ](4.5,0){}
+    (0,2) to [pC, l=$C_1$, o-] (0.5,2)
+    to [R,l=$R_1$,](1.5,2)
+    to node[short]{}(2.6,2)
+    (1.5,2) to [C, l=$C_2$, *-] (1.5,3) -| (5,3)
+    (2.2,2) to [R, l=$R_2$, *-*] (2.2,3)
+    (2.2,3) to [pC, l=$C_3$, *-] (2.2,5) -| (3,5)
+    % Transistor Bipolar Q1
+    (3,0) to [R,l=$R_5$,-*] (3,1.5)
+    to [Tnpn,n=npn1] (3,2.5)
+    (npn1.E) node[right=3mm, above=5mm]{$Q_1$} % Labelling the NPN transistor
+    (4,0) to [pC, l_=$C_4$, *-] (4, 1.5)--(3,1.5)
+    (2.2,0) to [vR, l=$R_3$, *-*] (2.2,2)
+    (3,2.5) to node[short]{}(3,3)
+    (3,5) to [pR, n=pot1, l_=$R_4$, *-] (3,3)
+    (3,5) to [R, l=$R_6$, *-] (5,5)
+    to [short,*-o](5,5.5) node[right]{$V_S=40 V$}
+    % Mosfet Transistors
+    (5,3) to [Tnigfetd,n=mos1] (5,5)
+    (mos1.B) node[anchor=west]{$Q_2$} % Labelling MOSFET Q2 Transistor
+    (pot1.wiper)  to [R, l=$R_7$] (4.5,4) -| (mos1.G)
+    (5,1.5) to [Tpigfetd,n=mos2] (5,2.5)
+    (5,0) to (mos2.S)
+    (3,2.5) to [R, l=$R_8$, *-] (4.5,2.5)
+    -| (mos2.G)
+    (mos2.B) node[anchor=west]{$Q_3$} % Labelling MOSFET Q3 Transistor
+    % Output
+    (6,3) to [pC, l=$C_5$,-*](5,3)
+    (6,3) to [short,-o] (6,2){}
+    (mos1.S)--(mos2.D)
+    (6,0) to [short,-o] (6,1){} node[above=7mm]{\large{\textbf{SPEAKER}}}
+    ;
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_EXPORT latex
+\begin{tikzpicture}[scale=2]
+  \draw[color=black, thick]
+    (0,0) to [short,o-] (6,0){} % Baseline for connection to ground
+    % Input and ground
+    (0,1) node[]{\large{\textbf{INPUT}}}
+    % Connection of passive components
+    (5,0) node[ground]{} node[circ](4.5,0){}
+    (0,2) to [pC, l=$C_1$, o-] (0.5,2)
+    to [R,l=$R_1$,](1.5,2)
+    to node[short]{}(2.6,2)
+    (1.5,2) to [C, l=$C_2$, *-] (1.5,3) -| (5,3)
+    (2.2,2) to [R, l=$R_2$, *-*] (2.2,3)
+    (2.2,3) to [pC, l=$C_3$, *-] (2.2,5) -| (3,5)
+    % Transistor Bipolar Q1
+    (3,0) to [R,l=$R_5$,-*] (3,1.5)
+    to [Tnpn,n=npn1] (3,2.5)
+    (npn1.E) node[right=3mm, above=5mm]{$Q_1$} % Labelling the NPN transistor
+    (4,0) to [pC, l_=$C_4$, *-] (4, 1.5)--(3,1.5)
+    (2.2,0) to [vR, l=$R_3$, *-*] (2.2,2)
+    (3,2.5) to node[short]{}(3,3)
+    (3,5) to [pR, n=pot1, l_=$R_4$, *-] (3,3)
+    (3,5) to [R, l=$R_6$, *-] (5,5)
+    to [short,*-o](5,5.5) node[right]{$V_S=40 V$}
+    % Mosfet Transistors
+    (5,3) to [Tnigfetd,n=mos1] (5,5)
+    (mos1.B) node[anchor=west]{$Q_2$} % Labelling MOSFET Q2 Transistor
+    (pot1.wiper)  to [R, l=$R_7$] (4.5,4) -| (mos1.G)
+    (5,1.5) to [Tpigfetd,n=mos2] (5,2.5)
+    (5,0) to (mos2.S)
+    (3,2.5) to [R, l=$R_8$, *-] (4.5,2.5)
+    -| (mos2.G)
+    (mos2.B) node[anchor=west]{$Q_3$} % Labelling MOSFET Q3 Transistor
+    % Output
+    (6,3) to [pC, l=$C_5$,-*](5,3)
+    (6,3) to [short,-o] (6,2){}
+    (mos1.S)--(mos2.D)
+    (6,0) to [short,-o] (6,1){} node[above=7mm]{\large{\textbf{SPEAKER}}}
+    ;
+\end{tikzpicture}
+#+END_EXPORT
+
 ** Multirate Data Conversion
 ** Single Bit Data Conversion

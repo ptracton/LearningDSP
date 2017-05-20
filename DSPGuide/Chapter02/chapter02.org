@@ -40,8 +40,8 @@ Mean(samples)
 #+END_SRC
 
 #+RESULTS: 
-: [78, 15, 37, 22, 51, 90, 86, 62, 68, 29, 52, 28, 49, 21, 73, 89, 79, 38, 66, 50]
-: 2
+: [15, 18, 86, 21, 75, 45, 61, 19, 99, 36, 34, 38, 58, 51, 59, 48, 10, 96, 32, 1]
+: 0
 
 *** Standard Deviation and Variance
 - *Average Deviation* is not commonly used.  Sums up all the deviations, from the mean, for each sample and divided by the number of samples.  Use absolute values for deviation otherwise differences could cancel out.
@@ -252,6 +252,8 @@ foo = plt.axis([40, 160, 0, 0.03])
 foo = plt.grid(True)
 foo = plt.savefig('../Notes/histogram.png', bbox_inches='tight')
 #+END_SRC
+
+#+RESULTS: python-histogram
 
 #+CAPTION: Histogram graph example
 #+NAME:   fig:HISTOGRAM

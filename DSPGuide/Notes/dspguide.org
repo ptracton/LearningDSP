@@ -4,6 +4,7 @@
 #+OPTIONS: toc:3          only inlcude two levels in TOC
 #+OPTIONS: toc:nil        no default TOC at all
 #+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{circuitikz}
 
 \maketitle
 \newpage
@@ -14,9 +15,13 @@
 
 #+INCLUDE: "../Chapter01/chapter01.org"
 \newpage
+
 #+INCLUDE: "../Chapter02/chapter02.org"
 \newpage
+
 #+INCLUDE: "../Chapter03/chapter03.org"
 \newpage
+
 #+INCLUDE: "../Chapter04/chapter04.org"
 \newpage
+
