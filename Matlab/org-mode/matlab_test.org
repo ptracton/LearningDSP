@@ -1,0 +1,91 @@
+#+TITLE:     Testing using Matlab
+#+AUTHOR:    Philip Tracton
+#+EMAIL:     ptracton@gmail.com
+#+OPTIONS: toc:3          only inlcude two levels in TOC
+#+OPTIONS: toc:nil        no default TOC at all
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{circuitikz}
+#+LaTex_HEADER: \usepackage{listings}
+
+
+\maketitle
+\newpage
+ #+TOC: headlines 3
+\newpage
+
+#+NAME: simple-example
+#+BEGIN_SRC matlab :session 
+x = pi/2;
+exponent = exp(x)
+sine = sin(x)
+cosine = cos(x)
+asine = asin(x)
+logarithm = log(x)
+#+END_SRC
+
+#+RESULTS: simple-example
+#+begin_example
+x = pi/2;
+exponent = exp(x)
+
+exponent =
+
+    4.8105
+sine = sin(x)
+
+sine =
+
+     1
+cosine = cos(x)
+
+cosine =
+
+   6.1232e-17
+asine = asin(x)
+
+asine =
+
+   1.5708 - 1.0232i
+logarithm = log(x)
+
+logarithm =
+
+    0.4516
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example
+
+#+BEGIN_SRC matlab :session 
+x = [-pi:.1:pi];
+ysin = sin(x);
+ycos = cos(x);
+plot(x,ysin, x,ycos);
+xlabel('X Axis')
+ylabel('Y Axis')
+legend('Sine', 'Cosine')
+saveas(gcf, 'sine_plot.png')
+
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+x = [-pi:.1:pi];
+ysin = sin(x);
+ycos = cos(x);
+plot(x,ysin, x,ycos);
+xlabel('X Axis')
+ylabel('Y Axis')
+legend('Sine', 'Cosine')
+saveas(gcf, 'sine_plot.png')
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example
+
+[[./sine_plot.png]]
+
