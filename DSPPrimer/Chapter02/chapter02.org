@@ -1,0 +1,271 @@
+* Continuous Time Signals and Their Spectra
+** Mathematical Modelling of Signals
+- *Transient* happens when we turn on and off the signal as it transitions from off to active or active to off.
+- *Steady State* is the state between the transients and is where the signal is most of the time.  This can be modelled as the state for all time.
+
+
+** Steady State Signal Models
+- Generally limited to sums of sinusoids
+- Includes virtually all periodic signals
+ 
+*** Periodicity
+- Waves that are periodic functions can be formed by repeating a cycle of the waveform over and over again
+**** A function x(t) is periodic with a period of T if and only if x(t+nT) = x(t) for all integer values of n
+
+*** Symmetry
+- A function cen exhibit symmertry in relation to its position to the origin.
+**** Even Symmetry is a function x(t) if for all t, x(t) = x(-t)
+#+BEGIN_SRC matlab :session 
+x = [-5:.1:5];
+y = x.^2;
+plot(x,y)
+title('Even Symmetry Example')
+legend('f(x) = x^2')
+saveas(gcf, '../images/even_symmetry_example.png')
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+< M A T L A B (R) >
+                  Copyright 1984-2017 The MathWorks, Inc.
+                   R2017a (9.2.0.556344) 64-bit (glnxa64)
+                               March 27, 2017
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+
+	Student License -- for use by students to meet course requirements
+	and perform academic research at degree granting institutions only.
+
+x = [-5:.1:5];
+y = x.^2;
+plot(x,y);
+title('Even Symmetry Example')
+legend('f(x) = x^2')
+saveas(gcf, 'even_symmetry_example.png')
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example
+[[../images/even_symmetry_example.png]]
+
+**** Odd Symmetry is a function x(t) if for all t, x(t) = -x(-t)
+#+BEGIN_SRC matlab :session 
+x = [-5:.1:5];
+y = x.^3;
+plot(x,y);
+title('Odd Symmetry Example')
+legend('f(x) = x^3')
+saveas(gcf, '../images/odd_symmetry_example.png')
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+x = [-5:.1:5];
+y = x.^3;
+plot(x,y);
+title('Odd Symmetry Example')
+legend('f(x) = x^3')
+saveas(gcf, '../imaas (line 129)
+Invalid or missing path: ../images/odd_symmetry_example.png
+}
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example
+
+[[../images/odd_symmetry_example.png]]
+Symmetry may not seem useful but it is.  The time of 0 can be arbitrary in a periodic signal and can be moved.  Any periodic function can be resolved as 
+
+#+NAME: eqn:2
+\begin{equation}
+x(t) = x_{even}(t) + x_{odd}(t) 
+\end{equation}
+
+#+NAME: eqn:3
+\begin{equation}
+x_{even}(t) = \frac{1}{2}[x(t) + x(-t)] 
+\end{equation}
+
+#+NAME: eqn:4
+\begin{equation}
+x_{odd}(t)  = \frac{1}{2}[x(t) - x(-t)] 
+\end{equation}
+
+
+** Energy Signals vs Power Signals
+For a signal x(t) being a current or voltage across a 1 \ohm resistor, the instantaneous normalized power is calculated as:
+#+NAME: eqn:5
+\begin{equation}
+p(t) = |x(t)|^2
+\end{equation}
+
+The total energy of the signal is then calculated as:
+#+NAME: eqn:6
+\begin{equation}
+P = \lim_{T\to\infty} \frac{1}{2T} \int_{-T}^{T} |x(t)|^2 dt
+\end{equation}
+
+If the total energy is finite and non-zero the the signal is an *energy signal*.  If the average power is finite and non-zero then the signal is a *power signal*  Periodic signals and most random signals are power signals.  Most aperiodic signals are energy signals.
+
+
+** Frequency Spectra of Periodic Signals: Fourier Series
+Periodic signals can be resolbed into linear combinations of phase shifted sinusoids via the *Fouries Series*.
+
+#+NAME: eqn:7
+\begin{equation}
+x(t) = \frac{a_0}{2} + \sum_{n=1}^{\infty} [a_n cos(n\omega_0 t) + b_n sin(n\omega_n t)]
+\end{equation}
+
+#+NAME: eqn:8
+\begin{equation}
+a_0 = \frac{2}{T}\int_{\frac{-T}{2}}^{\frac{T}{2}} x(t) dt
+\end{equation}
+
+#+NAME: eqn:9
+\begin{equation}
+a_n = \frac{2}{T}\int_{\frac{-T}{2}}^{\frac{T}{2}} x(t) cos(n\omega_0 t) dt
+\end{equation}
+
+#+NAME: eqn:10
+\begin{equation}
+b_n = \frac{2}{T}\int_{\frac{-T}{2}}^{\frac{T}{2}} x(t) sin(n\omega_0 t) dt
+\end{equation}
+
+T is the period of x(t) and $\omega_0 = \frac{2\pi}{T} = 2\pi f_0$ where $f_0$ is the fundamental radian frequency of x(t).  With a few identities we can simplify the initial equation.
+
+
+#+NAME: eqn:11
+\begin{equation}
+c_0 = \frac{a_0}{2}
+\end{equation}
+
+#+NAME: eqn:12
+\begin{equation}
+c_n = \sqrt{a_n^2 + b_n^2}
+\end{equation}
+
+#+NAME: eqn:13
+\begin{equation}
+\theta_n = tan^{-1}(\frac{b_n}{a_b})
+\end{equation}
+
+#+NAME: eqn:14
+\begin{equation}
+x(t) = c_0 + \sum_{n=1}^{\infty} [c_n cos(n\omega_0 t - \theta_n) ]
+\end{equation}
+
+The initial equation shows a dc component (outside of the summation) plus sinusoids whose frequencies are integer multiples of the signal's fundamental frequency.  The second harmonic is $2f_0$.  The third harmonic is $3*f_0$ and so on...
+
+
+** Exponential Form
+The initial equation makes it easy to visualize the process.  The exponential form is easier to manipulate.
+
+#+NAME: eqn:15
+\begin{equation}
+x(t) = \sum_{n = -\infty}^{\infty} c_n e^{j2\pi nf_0 t}
+\end{equation}
+
+#+NAME: eqn:16
+\begin{equation}
+c_n = \frac{1}{T} \int_{T} x(t) e^{-j2\pi f_o t} dt
+\end{equation}
+
+This means to evaluate over a single period T.  The values of $c_n$ are usually complex.  The real component is the magnitude and imaginary is the phase component.
+
+#+NAME: eqn:17
+\begin{equation}
+|c_n| = \sqrt{|Re(c_n)|^2 + |Im(c_n)|^2}
+\end{equation}
+
+#+NAME: eqn:18
+\begin{equation}
+\theta_n = tan^{-1}(\frac{Im(c_n)}{Re(c_n)})
+\end{equation}
+
+
+** Conditions of Applicability 
+The fourier series can be applied to almost all periodic signals. There are some functions for which the series will not converge.  
+
+List of requirements called /Dirichlet Conditions/
+- x(t) is a single valued function
+- x(t) has, at most, a finite number of discontinuities within each period
+- x(t) has, at most, a finite number of extrema within each period
+- x(t) is absolutely integrable over a period
+#+NAME: eqn:19
+\begin{equation}
+\int_{T} |x(t)| dt < \infty
+\end{equation}`
+
+
+** Properties of a Fourier Series
+The $c_n$ coefficients corresponding to x(t) are denoted X(n).
+#+NAME: eqn:20
+\begin{equation}
+x(t) = \sum_{n = -\infty}^{\infty} X(n) e^{\frac{j2\pi nt}{T}}
+\end{equation}
+
+| Property           | Time Function                                        | Transform                                 |
+|--------------------+------------------------------------------------------+-------------------------------------------|
+| Homogeneity        | ax(t)                                                | aX(n)                                     |
+| Additivity         | x(t) + y(t)                                          | X(n) + Y(n)                               |
+| Linearity          | ax(t) + by(t)                                        | aX(n) + bY(n)                             |
+| Multiplication     | x(t)y(t)                                             | $ \sum_{m = -\infty}^{\infty} X(n-m)Y(m)$ |
+| Convolution        | $\frac{1}{T} \int_{0}^{T} x(t - \tau) y(\tau) d\tau$ | X(n)Y(n)                                  |
+| Time Shifting      | $x(t - \tau)$                                        | $e^{\frac{-j2\pi nt}{T}}X(n)$             |
+| Frequency Shifting | $e^{\frac{-j 2\pi mt}{T}}x(t)$                       | $X(n-m)$                                  |
+
+
+** Fourier Series of a Square Pulse Train
+#+BEGIN_SRC matlab :session 
+t = linspace(-3*pi,3*pi)';
+x = square(t);
+f = 0;
+plot(t/pi,x,'.-',t/pi,sin(t))
+xlabel('t / \pi')
+grid on
+saveas(gcf, '../images/square_wave.png')
+
+x=3/pi;
+for i=1:1:10
+     an=sinc(i);
+     f=f+an*sin(i*(pi/2).*t);  % Summation Term
+end
+f=f+1; % Add DC A0 component to the final signal.
+figure;plot(t,f);
+saveas(gcf, '../images/fs_square_wave.png')
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+t = linspace(-3*pi,3*pi)';
+x = square(t);
+f = 0;
+plot(t/pi,x,'.-',t/pi,sin(t))
+xlabel('t / \pi')
+grid on
+saveas(gcf, '../images/square_wave.png')
+
+x=3/pi;
+for i=1:1:10
+     an=sinc(i);
+     f=f+an*sin(i*(pi/2).*t);  % Summation Term
+end
+f=f+1; % Add DC A0 component to the final signal.
+figure;plot(t,f);
+saveas(gcf, '../images/fs_square_wave.png')
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example
+
+[[../images/square_wave.png]]
+[[../images/fs_square_wave.png]]

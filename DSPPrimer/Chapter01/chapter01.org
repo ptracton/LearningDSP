@@ -1,0 +1,12 @@
+* Time Series Analysis
+** History
+In 1738 Daniel Bernoulli found a general solution for the vibrating string.  In 1822 Jean Baptiste Joseph Fourier extended the results showing that any arbitrary function f(x) could be approximated by an infinite summation of sines and cosines
+
+#+NAME: eqn:1
+\begin{equation}
+$f(x) = \sum_{n=1}^\infty (A_n cos n\alpha x + B_n sin n\alpha x)$
+\end{equation}
+
+
+
+Determining A and B is called harmonic analysis.

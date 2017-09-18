@@ -1,0 +1,23 @@
+#+TITLE:     DSP Primer Notes
+#+AUTHOR:    Philip Tracton
+#+EMAIL:     ptracton@gmail.com
+#+OPTIONS: toc:3          only inlcude two levels in TOC
+#+OPTIONS: toc:nil        no default TOC at all
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{circuitikz}
+#+LATEX_HEADER: \setlength{\parindent}{1cm}
+#+LaTex_HEADER: \usepackage{listings}
+
+\maketitle
+\newpage
+ #+TOC: headlines 2
+\newpage
+
+
+
+#+INCLUDE: "../Chapter01/chapter01.org"
+\newpage
+
+
+#+INCLUDE: "../Chapter02/chapter02.org"
+\newpage
