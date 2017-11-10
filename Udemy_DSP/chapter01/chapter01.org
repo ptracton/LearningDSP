@@ -1,0 +1,116 @@
+#+LATEX_HEADER: \usepackage{graphicx}
+
+* Chapter 01
+** Course Index
+*** References 
+- Openheimer and Schafer Digital Signal Processing from Prentice Hall 1975
+- Smith The scientist and Engineer's Guide to Digital Signal Processing 1997,  see http://www.dspguide.com
+- Hayes Schaum's Outline of Digital Signal Processing
+
+*** Preliminary Concpets
+- A  signal is a carrier of information.  An sort of physical or computable quantity which we give a meaning
+- An analog signal can have any value at any time.
+- A digital signal is a signal whose values are discrete numbers.    Only exist at finite points of time and values.
+**** Systems vs. Signals
+- A system is anything that can modify a signal, physically or electrically.
+- Often represented as a function or transform
+\begin{equation}
+Y = F(x)
+\end{equation}
+**** Linear Shift Invariant Systems (LSI) 
+- Linear -- super position applies
+\begin{equation}
+F(x) = g 
+\end{equation}
+\begin{equation}
+F(y) = h
+\end{equation}
+\begin{equation}
+F(ax+by) = ag + bh
+\end{equation}
+- Shift invariant - shape of system output does not vary with starting point.  You want this. 
+- associative and commutative
+- Analog to Linear Time Invariant system in time domain
+\begin{equation}
+if x(n) \rightarrow y(n) then x(n-n_{0}) \rightarrow y(n-n_{0})
+\end{equation}
+
+**** Sequence Properties
+- Periodicity
+A sequence is periodic if there exist a period T such that for all n and k
+\begin{equation}
+x(n+Tk) = x(n)
+\end{equation}
+
+- Symmetry
+  + A sequence is even if for every n $x(n) = x(-n)$  Mirrored in y axis
+  + A sequence is odd if for every n, $x(n) = -x(-n)$ Mirrored and x and y axis
+  + A sequnce is /conjugate symmetric/ if for all n x(n) = x^{*}(-n)  * is complex conjugate
+  + A sequnce is /conjugate asymmetric/ if for all n x(n) = -x^{*}(-n)
+
+**** Fundamental Sequences
+- Can shift these signals
+- Unit Sample, digital equivalent of [[https://en.wikipedia.org/wiki/Dirac_delta_function][Dirac Delta function]].
+
+\begin{equation}
+\delta(n) = \left\{
+\begin{array}{ll}
+1 & n = 0 \\
+0 & otherwise
+\end{array}
+\right
+\end{equation}
+
+[[../Notes/images/dirac_stemplot.png]]
+
+- Unit step, digital equivalent of the [[https://en.wikipedia.org/wiki/Heaviside_step_function][Heaviside Step Function]]
+\begin{equation}
+u(n) = \left\{
+\begin{array}{ll}
+1 & n \geq  0 \\
+0 & otherwise
+\end{array}
+\right
+\end{equation}
+
+[[../Notes/images/unit_step_stemplot.png]]
+**** Definitions
+- A system is /stable/ is the output is bounded for all bounded inputs.  
+  + $Y = F(x)$ is finite if x is finite
+- A system is /causal/ if the current output depends only on the current input, previous inputs or previous outputs.  It does *not* need to look into future to work.
+**** System Representaion
+- Three common methods of representing a system
+  - Difference Equation
+  - Block Diagram
+  - Signal Flow Graph
+- Difference Equation
+  - Digital counter part to a differential equation
+  - Represent the output as a combination of previous inputs and outputs
+\begin{equation}
+y_{k} = \sum_{n = - \infty}^{k-1} a_{n}x_{n} + \sum_{n=-\infty}^{k-1} b_{n}y_{n}
+\end{equation}
+  - When output depends only on previous input and not previous output the system is known to have /Finite Impulse Response/ and we categorize these as FIR. No feedback in system.  b coefficients are 0.
+  - The converse is also true and those systems are known as /Infinite Impulse Response/ or IIR.  There is feedback in the system. b coefficients are non zero.
+**** Example Problems
+ - $y_{k} = \alpha y_{k-1} + x_{k}$ where input $x_{k} = b^{k}$ for $k \geq 0$
+ - Step 1 Homogeneous Solution
+   - set equation to be equal to 0
+   - $y_{k} - \alpha y_{k-1} = 0$ which yields the characteristic equation $r - \alpha = 0$
+   - Thus $y_{k_{h}} = c_{1}\alpha^{k} + c_{2}$
+ - Step 2 Particular Solution
+   - [[http://tutorial.math.lamar.edu/Classes/DE/UndeterminedCoefficients.aspx][Undetermined Coefficients]], assume $y_{k_{p}} = c_{3}b^{k}$ due to form of input
+   - Plug into difference equations to find coefficient.
+     - $c_{3}b^{k} = \alpha c_{3}b^{k-1} + b^{k}$
+     - $c_{3} = \frac{1}{1-\frac{a}{b}}$
+ - Step 3 Combine
+   - Yields solution $y_{k} = c_{1}\alpha^{k} + \frac{1}{1-\frac{a}{b}} b^{k} + c_{2}$
+   - Need to know initial conditions to solve for $c_{1}$ and $c_{2}$
+
+**** Block Diagrams
+  - Represent the flow of information in a visual manner
+  - Basic components are unit delay (often $z^{-1}$), sum and gains/multiply
+  - Useful in implementation
+
+**** Signal Flow Graph
+  - Similar to block diagram, different appearance
+  - Each node is considered summation

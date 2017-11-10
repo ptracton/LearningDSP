@@ -1,0 +1,136 @@
+#+LATEX_HEADER: \usepackage{graphicx}
+
+* Chapter 02
+** Convolution
+*** The Heart of the Matter
+- /Convolution/ is a function derived from two given functions by integration which expresses how the shape of one modifies the shape of the other one.
+  - Essentially a method of combining two functions.
+  - in the continuous domain
+    \begin{equation}
+    h(t) = f(t) * g(t)
+    \end{equation}
+    \begin{equation}
+    h(t) = \int_{-\infty}^{\infty} f(s) g(t-s)ds
+    \end{equation}
+  - in the discrete/digital domain
+    \begin{equation}
+    h(n) = f(n) * g(n)
+    \end{equation}
+    \begin{equation}
+    h(n) = \sum_{k = -\infty}^{\infty} f(k) g(n-k)
+    \end{equation}
+- In the case of LSI (linear shift invariant) systems the relationship between input and output can be described as the convolution of the input with the system's impulse response /h/
+\begin{equation}
+y(n) = h(n) * x(n)
+\end{equation}
+  - It is of interest to discover the effects of our design choices which affect /h/ on the output y through convolution with the input
+- Finite Disctete systems
+  - "Flip and Shift"
+  - Take one input sequence, and flip it left right.  Starting at first element of the other input sequence, multiply and sum all overlapping elements.  This is the value of the output at that point in time.
+- The *FUNDAMENTAL* operation of DSP.  Without it we cannot afect change in a system via any of the classic methods
+- It is a /linear/ operator.  Order of convolution does not matter.  It is associative and distributive with other operation
+- It is computationally /expensive/ as sequences get large.
+[[../Notes/images/convolution_stemplot.png]]
+
+**** Convolution Example
+- Is a linear operator which makes it both associative and commutative.  Does not matter which sequence if flipped or shifted.
+  - F(n) = [0,1,2] and g(n) = [1 1 1 1]
+  - Flip F(n) $\rightarrow$ [2,1,0]
+  - line up so that the last element of F overlaps the first element of g
+  - Process the data $H(n) = \sum_{k = 0}^{5} F(k) g(n-k)$
+  - Sum up wherever there is an overlap of numbers
+  - Keep shifting to the right by 1 for each iteration
+
+  \begin{array} {lllllll}
+  2 & 1 & 0 &   &   &   & \\
+    &   & 1 & 1 & 1 & 1 &
+  \end{array}
+    - H(0) = 1* 0 = 0
+
+    \begin{array} {lllllll}
+      & 2 & 1 & 0 &   &   & \rightarrow by 1 \\
+      &   & 1 & 1 & 1 & 1 &
+    \end{array}
+    - H(1) = (0 * 1) + (1 * 1) = 1
+
+    \begin{array} {lllllll}
+      &   & 2 & 1 & 0 &   & \\
+      &   & 1 & 1 & 1 & 1 &
+    \end{array}
+    - H(2) =  (0 * 1) + (1 * 1) + (2 * 1) = 3
+
+    \begin{array} {lllllll}
+      &   &   & 2 & 1 & 0  & \\
+      &   & 1 & 1 & 1 & 1 &
+    \end{array}
+    - H(3) = (0 * 1) + (1 * 1) + (2 * 1) = 3
+
+    \begin{array} {lllllll}
+      &   &   &   & 2 & 1 & \\
+      &   & 1 & 1 & 1 & 1 &
+    \end{array}
+    - H(4) = (2 * 1) + (1 * 1) = 3
+
+    \begin{array} {lllllll}
+      &   &   &   &   & 2 & \\
+      &   & 1 & 1 & 1 & 1 &
+    \end{array}
+    - H(5) = 2 * 1 = 2
+    - H(n) = [0 1 3 3 3 2]
+#+begin_src octave :session
+f = [0 1 2 ]
+g = [1 1 1 1]
+h = conv(f, g)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+f =
+
+   0   1   2
+g =
+
+   1   1   1   1
+h =
+
+   0   1   3   3   3   2
+#+end_example
+
+** Sampling
+- In nearly all DSP applictions we will concern ourselves with signals that originate in the physical world.
+  - Audio signals
+  - Video signals
+  - pressure, acceleration, attitude sensors
+- The physical world is analog.  Signals are continuous in both time and value. Must convert to digital format for DSP to be applied to it.
+  - This is achieved by a /sampler/ which translates a signal value to a discrete number.
+*** ADCs and DACs
+- Samplers are usually ADC ([[https://en.wikipedia.org/wiki/Analog-to-digital_converter][analog to digital converter]]) 
+  - Many different types with [[https://en.wikipedia.org/wiki/Successive_approximation_ADC][successive approximation]] being the most common but all function similarly.
+- The opposite is a DAC ([[https://en.wikipedia.org/wiki/Digital-to-analog_converter][digital to analog converter]])
+
+[[../Notes/images/adc_plot_example.png]]
+*** Sampling Theory
+- We can treat each sample as a numeric representation of the input waveform at a particular instant in time.
+  - We need enough of these samples to encode information about the waveform
+  - How much is enough?
+*** Shannon-Nyquist Sampling Theorem
+- How much is enough is a simple question.
+- /The input sequence must be sampled *twice* as fast as the highest frequency input signal/
+  - If we habe a 10KHz input signal we must sample at a minimum of 20KHz.
+  - The frequency limit (10KHz in this case) is the /Nyquist Frequency/.  We can find this by dividing the sampling frequency in half.
+  - Any signals above the Nyquist will not be properly samples and even be aliased into the domain of interest.
+** Aliasing
+*** How not to sample
+- Unfortunate side affect of sampling is /aliasing/.  
+  - Signal higher than the Nyquist Frequency get reflected back into the sampled frequency band.
+    - We sample a signal at 20KHz.  It has an 8KHz and 15 KHz components.   
+    - The 15 KHz is above the Nyquist Frequency (20/2=10KHz) and aliased into the sampled band. The aliased signal is just the original frequency (15) minus the Nyquist (10).  15-10 = 5KHz signal in our samples that does not really exist.
+
+*** How to sample
+- The inclusion of /spurious/ signals in our samples is undesirable especially given their unpredictability.
+   - We may have a signal of interest at 10Khz and sample at 20KHz as per Nyquist but their might be a 4GHz component that we can't see or hear.
+- Solution is to /always include an [[http://digital.ni.com/public.nsf/allkb/68F14E8E26B3D101862569350069E0B9][anti-aliasing filter]]/ in our sampled system designs.
+  - Most common technique is a [[http://www.electronics-tutorials.ws/filter/filter_2.html][passive network low pass filter]] with corner frequency around the nyquist rate.
+  - *You can NOT do this in the digital domain*
+    - Why not? The damage has already been done!

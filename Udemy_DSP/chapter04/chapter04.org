@@ -1,0 +1,8 @@
+#+LATEX_HEADER: \usepackage{graphicx}
+
+* Chapter 04
+** Time and Frequency Domain
+** Convolution Example
+** Enter the DFT
+** DFT Computation Example
+** The Z Transform
