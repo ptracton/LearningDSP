@@ -2,7 +2,167 @@
 
 * Chapter 04
 ** Time and Frequency Domain
+- Signal Domains Time vs. Frequency
+  - Up to now we have only considered the time domain.
+    - This is where the signal is represented by a sequence of numbers.  Each representing the amplitude of the signal at a given point in time.
+- Frequency Domain
+  - Rather than a sequnce of numbers representing amplitude vs. time we have amplitude vs. frequency.
+  - Why is this useful?
+    - Signal Inspection
+      - Viewing a signal in the frequency domain allows the analyst to very easily discern the which frequencies have the most power.
+      - This is useful in filter design where we would like to manipulate the frequency content of a signal to suit our purposes.  Can't manipulate what you don't know.
+    - Convolution
+      - Convolution and Multiplication are duals of each other in different domains
+      - convolution in time is multiplication in frequency
+      - convolution in frequency is multiplication in time
+      - convolution is computationally efficient in frequency domain!
+[[../Notes/images/time_freq_plot.png]]
+
 ** Convolution Example
+- Time to process n data points via convolution in time domain grows at $n^{2}$ This is bad!
+#+begin_src matlab :session
+close all; 
+clear all;
+clc;
+
+a = [1 2 3 4 5 6];
+b = [1 1 1 1];
+
+z = conv(a,b)  % <-- This is a LOT of steps
+
+fft_a = fft(a)
+fft_b = fft(b)
+
+C = fft_a .* fft_b'
+
+ifft(C)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+close all;
+clear all;
+clc;
+
+a = [1 2 3 4 5 6];
+b = [1 1 1 1];
+
+z = conv(a,b)  % <-- This is a LOT of steps
+
+z =
+
+     1     3     6    10    14    18    15    11     6
+
+fft_a = fft(a)
+
+fft_a =
+
+  Columns 1 through 4
+
+  21.0000 + 0.0000i  -3.0000 + 5.1962i  -3.0000 + 1.7321i  -3.0000 + 0.0000i
+
+  Columns 5 through 6
+
+  -3.0000 - 1.7321i  -3.0000 - 5.1962i
+fft_b = fft(b)
+
+fft_b =
+
+     4     0     0     0
+
+C = fft_a .* fft_b'
+
+C =
+
+  Columns 1 through 4
+
+  84.0000 + 0.0000i -12.0000 +20.7846i -12.0000 + 6.9282i -12.0000 + 0.0000i
+   0.0000 + 0.0000i   0.0000 + 0.0000i   0.0000 + 0.0000i   0.0000 + 0.0000i
+   0.0000 + 0.0000i   0.0000 + 0.0000i   0.0000 + 0.0000i   0.0000 + 0.0000i
+   0.0000 + 0.0000i   0.0000 + 0.0000i   0.0000 + 0.0000i   0.0000 + 0.0000i
+
+  Columns 5 through 6
+
+ -12.0000 - 6.9282i -12.0000 -20.7846i
+   0.0000 + 0.0000i   0.0000 + 0.0000i
+   0.0000 + 0.0000i   0.0000 + 0.0000i
+   0.0000 + 0.0000i   0.0000 + 0.0000i
+
+ifft(C)
+
+ans =
+
+  Columns 1 through 4
+
+  21.0000 + 0.0000i  -3.0000 + 5.1962i  -3.0000 + 1.7321i  -3.0000 + 0.0000i
+  21.0000 + 0.0000i  -3.0000 + 5.1962i  -3.0000 + 1.7321i  -3.0000 + 0.0000i
+  21.0000 + 0.0000i  -3.0000 + 5.1962i  -3.0000 + 1.7321i  -3.0000 + 0.0000i
+  21.0000 + 0.0000i  -3.0000 + 5.1962i  -3.0000 + 1.7321i  -3.0000 + 0.0000i
+
+  Columns 5 through 6
+
+  -3.0000 - 1.7321i  -3.0000 - 5.1962i
+  -3.0000 - 1.7321i  -3.0000 - 5.1962i
+  -3.0000 - 1.7321i  -3.0000 - 5.1962i
+  -3.0000 - 1.7321i  -3.0000 - 5.1962i
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example
+
 ** Enter the DFT
+- Convolution and time/from time/frequency domains can be computationally expensive
+- Frequency complexity grows slower than time domain especially once n $\geq$ 100 which is not large at all.
+- Comparison
+  - Convolution is porportional to $n^2$ and written as $O(n^2)$
+  - The transform method is computationally $O(n*log_{2}(n))$
+  - Cross over at 128 points
+*** Fourier Transform
+- Originated by Joseph Fourier in 1822
+- [[https://betterexplained.com/articles/an-interactive-guide-to-the-fourier-transform/][Analog Fourier Transform]]
+\begin{equation}
+F(s) = \int_{- \infty}^{\infty} e^{-2\pi jxs}dx
+\end{equation}
+  - Converts an analog signal to a sum of coefficients representing its amplitude and phase at each frequency in the frequency domain.
+  - Transforms the function f(x) from a function in independent variable x to one in independent variable s.
+- [[http://mathworld.wolfram.com/DiscreteFourierTransform.html][Discrete Fourier Transform]]
+\begin{equation}
+X_{k} = \sum_{n=0}^{N-1} x_{n} e^{\frac{-2\pi i k n}{N}}
+\end{equation}
+
+\begin{equation}
+x_{n} = \frac{1}{N} \sum_{k=0}^{N-1} X_{k} e^{\frac{2\pi i k n}{N}}
+\end{equation}
+  - Converts a discrete sequence of values to another sequence of values (in general complex) representing amplitude and phase at each frequency up to the Nyquist rate for the sequence.
+    - Also transforms from time(n) to frequency(k)
 ** DFT Computation Example
+- After using the DFT on a signal we can get the frequency response of the signal
+\begin{equation}
+|X_{k}| = \sqrt{Re(X_{k})^{2} + Im(X_{k})^{2}}
+\end{equation}
+
+\begin{equation}
+\theta_{k} = tan^{-1}\frac{ Im(X_{k}) } {Re(X_{k})}
+\end{equation}
+
+- Notice the reflection of the response due to aliasing above the Nyquist rate.
+*** Fast Fourier Transform
+- Cooley and Tukey in 1965
+- [[https://en.wikipedia.org/wiki/Fast_Fourier_transform][Reduces complexity via symmetry]]
+  - Original DFT $O(n^2)$
+  - FFT $O(nlog(n))$
+- Reference [[http://www.fftw.org][Free C Implementation]]
+
+*** Application to Convolution
+- As mentioned previously the DFT cna be used to perform convolution.
+  - Side Effect: convolution is circular and not linear
+    - This can be the same answer in certain conditions
+    - We generally want linear convolution since circular does not give proper results when filtering
+  - In order to do it linearly there must be enough room (/padding/) in the 2 signals
+    - Choose a period size N for both sequences that is equal to or greater than L + M -1 where L and M are the sizes of the 2 sequences.
+    - Power of 2 is good, FFT is fastest this way.
+    - Extend each input to N samples and set those extra samples to 0
 ** The Z Transform
