@@ -166,3 +166,54 @@ x_{n} = \frac{1}{N} \sum_{k=0}^{N-1} X_{k} e^{\frac{2\pi i k n}{N}}
     - Power of 2 is good, FFT is fastest this way.
     - Extend each input to N samples and set those extra samples to 0
 ** The Z Transform
+- Z Transform is a generalization of the DFT
+  - Z plane is digital complex plain
+  - S plane is the analog complex plain
+  - Much like Laplace is to the analog Fourier Transform
+  - The DFT is equivalent to the Z Transform evaluated on a unit circle
+- What is it?
+\begin{equation}
+X(z) = \sum_{n} x[n]z^{-n}
+\end{equation}
+  - Powers of z are often interpreted as delays in the system where the power represents the number of times the signal is delayed.
+    - $z^{-2}$ is a two clock cycle delay
+  - Offers a powerful method of system description and analysis
+    - Can obtain a rational /transfer function/ of a system that will allow us to find /poles/ and /zeros/ of a system and determine its behavior.
+*** Common Z Tranform Pairs
+**** TODO Find the list and put it here
+*** Transfer Functions
+- Consider a system with impulse response /h/
+  - The output of such a system can be obtained from the input such that
+\begin{equation}
+y(n) = x(n)*h(n)
+\end{equation}
+  - If we take the Z transform of the system we can obtain a /transfer function/
+\begin{equation}
+\frac{Y(z)}{X(z)} = H(z)
+\end{equation}
+  - When we form H(z) as a rational polynomial function (a ratio of 2 polynomial functions) we can easily discern the /poles/ and /zeros/ of the system.
+*** Poles and Zeros
+- Definitions
+  - /Zero/ of a system is a value of the complex frequency Z that will for the transfer function to a 0
+  - /Pole/ is a value of z which will cause the transfer function to become unbounded, i.e. infinite
+- Finding them can be accomplished via analysis of the transfer function
+  - Given a rational transfer function
+\begin{equation}
+H(z) = \frac{b_{m}z^{m} + ... b_{1}Z^{1} + b_{0}}{a_{n}z^{n} + ... + a_{1}z^{1} + a_{0}}
+\end{equation}
+  - We can consider the numerator and denominator as separate equations
+    - The roots of the numerators are the /zeros/
+    - The roots of the denominator are the /poles/, the characteristic equation
+- We can factor the equation to arrive at a different form
+\begin{equation}
+H(z) = \frac{(z-z_{1})(z-z_{2})}...(z-z_{m}){(z-p_{1})(z-p_{2})...(z-p_{n})}
+\end{equation}
+  - Here $z_{1}$ through $z_{m}$ are the /zeros/ and $p_{1}$ through $p_{n}$ are the /poles/
+*** Pole Placement and Response
+- Poles outside the unit circle grow exponentially
+- Poles inside the unit circle decay
+- Poles right on unit circle are /marginally stable/ and oscillate
+- The characteristic equation is so called dueo the polse major effect on the behavior of the system
+  - The figure shows how systems with different pole locations react to the exact same input (an impulse)
+  - It should be noted that while pole placement dominates the characterization of the system resposne zeros also influence it.
+  - Many filters are designed specifically to /not/ use poles.  This has certain performance advantages in real time systems.
