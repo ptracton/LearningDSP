@@ -1,0 +1,380 @@
+#+LATEX_HEADER: \usepackage{graphicx}
+
+* Chapter 07
+** Ideal Filters and Specifications
+*** What we know so far
+- A 'filter' for us will be
+  - Linear Shift Invariant (LSI)
+  - Discrete
+  - Describable by difference equation and a z-domain transfer function
+- It will also have a specific purpose
+  - Let some portion of input pass and blocking others
+  - Most often interested in filtering portions of a signals bandwidth
+*** Definitions
+- *Passband* is the group of frequencies which a filter allows to pass through with minimal alteration
+- *Stopband* is the group of frequencies the filter blocks
+- *Filter Order* is the number of delays necessary to implement the filter
+*** Filter Types
+- *Lowpass* is when the frequencies below the "corner" frequency are allowed to pass
+- *Highpass* is when the frequencies above the "corner" frequency are allowed to pass
+- *Bandpass* is when the frequencies in between the 2 "corner" frequencies are allows to pass
+- *Bandstop or Notch* is when the frequencies outside of the 2 "corner" frequencies are allows to pass
+- *Transition Band* the window between the corner frequency and the stop band.
+- *Stop Band* the range of frequencies that are blocked
+*** Ideal Filters
+- No such thing in practice!
+- An ideal low pass filter would be one with a frequency response as shown
+  - A completely "flat" response in the passband and stop band
+  - Instant transition from pass to stop (sharpness)
+  - Zero phase/group delay
+    - Signal does not get delayed going through filter
+**** TODO Create image  
+*** Filter Specification
+- Must specify exactly what they do
+- Typically Include the following
+  - *Stopband Attenuation* is how little of the unwanted signal should the filter allow through usually in dB
+  - *Corner or Cutoff  Frequency* is the frequency at which the passband ends and the stopband begins
+  - *Passband Ripple* is how much the amplitude of passed frequencies should vary in the passband
+  - *Phase Lag or Group Delay* is how much an input signal should be slowed down by passing through the filter.
+**** TODO Create image
+** IIR Design
+*** Digital Frontier
+- In digital filters there are 2 classifications of filters
+  - Infinite Impulse Response (IIR)
+    - Present and previous values needed to process, this is the pole!
+    - Refers to a system/filter that has poles in its transfer function
+    - All analog filter fall into this category as it is not possible to synthethize an analog filter without poles
+    - Can *not* be realized by FFT (due to /infinite/ impulse response)
+      - Can be done if choose a finite portion of the infinite response.
+    - Easier to make and work better
+  - Finite Impulse Response (FIR)
+    - No feedback, only current input used
+    - A system/filter without polse
+    - Generally better time domain performance (fewer calculations, less memory) than IIR.  Lower effective cost.
+*** Techniques for IIR Design
+- By far the most common technique for IIR digital filter design is to perofrm the design in the analog domain
+  - The amount of literature and number of techniques available for analog filters makes it redundant to attempt to duplicate in digital domain
+  - Relative easy method of transforming an analog filter's transfer function to a digital transfer function via [[https://en.wikipedia.org/wiki/Bilinear_transform][Tustin's Bilinear Transformation]], makes IIR simple when starting with an analog filter.
+- Our design process is to find a digital transfer functions whose frequency response is as close a possible to the analog prototype.
+*** Bilinear Transform
+- Defined as 
+\begin{equation}
+S = \frac{2}{T_{s}} \frac{1-z^{-1}}{1+z^{-1}}
+\end{equation}
+- T_{s} is the sampling period
+- Implement a filter in the LaPlace S-domain and plug this equation in for s to make it digital
+- This gives us a direct method of substitution to obtain a digital transfer function from an analog one (which would be a function of the complex frequency s)
+- Bilinear transform has the propert that it maps the entire imaginary axis of the s-plane to the unit circle of the z-plan.
+  - This means we have an /infinitely long line/ mapped to a finite length curve.
+  - As such the imaginary axis mist be shortened to fit
+  - The result is called /frequency warping/.  The further we move around the unit circle after using the transform, the bigger the difference in the analog and digital frequencies.
+
+*** Frequency Warping
+- The relationship between analog frequency and digital under the bilinear transform is
+#+NAME: bilinear_frequency
+\begin{equation}
+\omega_{d} = tan^{-1}(\frac{\omega_{a} T_{s}}{2})
+\end{equation}
+  - We can see the distortion gets more pronounced the close the analog frequency gets to the Nyquist rate ($f_{N}= \frac{2}{T_{s}}$).
+- How to get around this?
+  - We can /prewarp/ our frequency constraints before we design the analog filter so that we end up with the desired performance in the digital filter.
+    - Prewarping is accomplished by inverting the warping relation ship in [[bilinear_frequency]]
+\begin{equation}
+\omega_{a}T_{s} = 2 tan(\frac{\omega_{d}}{2})
+\end{equation}
+  - NOTE: Because we are design the filter after we prewarp we can choose an arbitrary sampling period here which is indepdent of the actual sampling period of the implementation of the filter.
+  - Thus with a good choice of sampling period the prewarp equation becomes
+\begin{equation}
+\omega_{a} = tan (\frac{\omega_{d}}{2})
+\end{equation}
+*** The Recipe for Filter Success
+- With the bilinear transform and prewarping formulas in hand we are ready to design an IIR
+  - Specify the filter performance criteria as necessary
+  - Prewarp corner frequencies
+  - Design an analog filter which meets the performance criteria at the /prewarp frequencies/
+    - Lots of [[http://www.analog.com/media/en/training-seminars/design-handbooks/Basic-Linear-Design/Chapter8.pdf][material]] about this [[https://www.maximintegrated.com/en/app-notes/index.mvp/id/1795][online]], not [[https://www.maximintegrated.com/en/products/analog/analog-filters.html][covered]] in this course
+  - Substitute s in the transfer functions of the analog filter using the bilinear transformation
+  - Use resulting digital transfer functions to implement the filter in software/hardware
+** IIR Design Example
+*** TODO The video is a repeat of the previous lesson.  This has been true for over 6 months
+#+begin_src matlab :session 
+%% Startup and Globals 
+clear all;
+clc;
+
+%% Filter Parameters
+fs = 40000;
+
+wc = 2000;
+ws = 12000;
+ripple = 0.1;
+atten = 40;
+
+%% Intermediate Calculations for Butterworth Filter Design
+del = 10^(ripple/20) - 1;
+A = 10^(atten/20);
+eps = sqrt((1/(1-del))^2 - 1);
+
+wcd = wc/fs*2*pi;
+wsd = ws/fs*2*pi;
+
+wc_warp = tan(wcd/2);
+ws_warp = tan(wsd/2);
+
+d = eps/sqrt(A^2 - 1);
+k = wc_warp/ws_warp;
+del_s = sqrt(d^2/((1-del)^(-2) - 1));
+
+N = ceil(log(d)/log(k));
+
+% Pre-warping of frequencies
+wc_min = wc_warp*((1-del)^(-2) - 1)^(-1/(2*N));
+wc_max = ws_warp*((del_s)^(-2) - 1)^(-1/(2*N));
+
+wn = (wc_max + wc_min)/2;
+
+%% Actual Filter Design
+
+% Hey! Look at that, MATLAB has a function to design Butterworth Filters!
+[b,a] = butter(N,wn,'s');
+
+% This uses the coefficients to create a continuous time system object
+sys = tf(b,a);
+bode(sys);
+
+% And this handy function converts that continuous time systems to 
+% a digital one for us, using the bilinear transformation. 
+d_sys = c2d(sys,2,'zoh')
+
+saveas(gcf, '../Notes/images/iir_filter.png')
+#+end_src
+
+#+RESULTS:
+#+begin_example
+%% Startup and Globals
+clear all;
+clc;
+
+%% Filter Parameters
+fs = 40000;
+
+wc = 2000;
+ws = 12000;
+ripple = 0.1;
+atten = 40;
+
+%% Intermediate Calculations for Butterworth Filter Design
+del = 10^(ripple/20) - 1;
+A = 10^(atten/20);
+eps = sqrt((1/(1-del))^2 - 1);
+
+wcd = wc/fs*2*pi;
+wsd = ws/fs*2*pi;
+
+wc_warp = tan(wcd/2);
+ws_warp = tan(wsd/2);
+
+d = eps/sqrt(A^2 - 1);
+k = wc_warp/ws_warp;
+del_s = sqrt(d^2/((1-del)^(-2) - 1));
+
+N = ceil(log(d)/log(k));
+
+% Pre-warping of frequencies
+wc_min = wc_warp*((1-del)^(-2) - 1)^(-1/(2*N));
+wc_max = ws_warp*((del_s)^(-2) - 1)^(-1/(2*N));
+
+wn = (wc_max + wc_min)/2;
+
+%% Actual Filter Design
+
+% Hey! Look at that, MATLAB has a function to design Butterworth Filters!
+[b,a] = butter(N,wn,'s');
+
+% This uses the coefficients to create a continuous time system object
+sys = tf(b,a);
+bode(sys);
+
+% And this handy function converts that continuous time systems to
+% a digital one for us, using the bilinear transformation.
+d_sys = c2d(sys,2,'zoh')
+
+d_sys =
+ 
+  0.02554 z^2 + 0.07528 z + 0.01412
+  ---------------------------------
+  z^3 - 1.849 z^2 + 1.27 z - 0.3058
+ 
+Sample time: 2 seconds
+Discrete-time transfer function.
+
+saveas(gcf, '../Notes/images/iir_filter.png')
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example
+
+
+[[../Notes/images/iir_filter.png]]
+
+#+RESULTS:
+
+** FIR Design
+- There is no analog counterpart
+- The FIR Filter has a transfer function with /no poles/.  This equates to /no feedback/ in the filter and certain advantages
+  - Guaranteed to be stable due to lack of feedback
+  - Simple to make the phase response linear
+  - Efficient to compute in real time via FFT
+- Several methods available to FIR design
+  - Window/Truncation of an ideal filter
+  - Frequency Domain sampling and an iFFT
+  - Least Squares approximation
+- Only discussing windowing method - simpler
+
+*** More on our Ideals
+- The ideal low pass filter frequecy response and it's time domain impulse response are shown
+  - Ideally phase is 0
+  - Note that while we could sample and use time impulse response it is both infinite and non-causal meaning it can not be used for real time 'on-line' filtering
+#+begin_src matlab :session :results value
+x = -2*pi:.1:2*pi;
+y = [ones(1,90),zeros(1,36)];
+plot(x,y)
+grid on
+title('Ideal Low Pass Filter in Frequency Domain')
+axis ([0,8 -0.2 1.3])
+xlabel('Frequency')
+ylabel('Amplitude')
+saveas(gcf, '../Notes/images/ideal_low_pass_time_frequency.png')
+#+end_src
+
+[[../Notes/images/ideal_low_pass_time_frequency.png]]
+
+- [[https://www.mathworks.com/help/signal/ref/sinc.html?searchHighlight=sinc&s_tid=doc_srchtitle][Sinc funcion]] is infinite and can not fit in a computer's memory
+- Sinc function is non-causal.  There are samples that depend on both the past (left of y-axis) and future (right of y-axis)
+#+begin_src matlab :session :results value
+x = -2*pi:.1:2*pi;
+y = sinc(x);
+plot(x,y)
+grid on
+title('Time Domain of Ideal Low Pass Filter')
+ylabel('Amplitude')
+xlabel('Time')
+saveas(gcf, 'Notes/images/ideal_low_pass_time_domain.png')
+#+end_src
+
+[[../Notes/images/ideal_low_pass_time_domain.png]]
+*** A Window to Filter Through
+- By multiplying the ideal filter response(which is a sinc wave) by a proper window function we can truncate it
+  - Thus our filter's impulse response will become finite
+  - Once finite we can also shift the filter's response to the left t make is causal
+  - /Which window do we use?/
+- More samples in your window the worse the phase performance from the order of the filter being higher but more steep cutoff
+**** TODO Get images
+*** Comparison of Windows
+- Different windows have different frequecy responses
+  - The ultimate share of the FIR filter's response will be decided by the shape of the window's response
+  - Tow Major Factors
+    - Width of main lobe determines the sharpness of the transition band
+    - Amplitude of the side lobes determines the amount of ripple in the final filter frequency response.
+
+|-------------+--------------------------+-----------------------------+-----------------------|
+| Window      | Side Lobe Amplitude (dB) | Transition Width (\Delta f) | Stop Band Attenuation |
+|-------------+--------------------------+-----------------------------+-----------------------|
+| Rectangular |                      -13 | 0.9/N                       |                   -21 |
+| Hanning     |                      -31 | 3.1/N                       |                   -44 |
+| Hamming     |                      -41 | 3.3/N                       |                   -53 |
+| Blackman    |                      -57 | 5.5/N                       |                   -74 |
+|-------------+--------------------------+-----------------------------+-----------------------|
+
+  - We can trade the length of the window (N) for eitehr computation speed or sharpness of transition
+  - We can trade the shapre of the window (Blackman vs. Hamming, etc...) for total attenuation and passband ripple
+  - Side lobe amplitude affects ripple, higher side lobe is more ripple
+
+- [[https://www.mathworks.com/help/signal/ref/rectwin.html?searchHighlight=rectangular%20window&s_tid=doc_srchtitle][Rectangular Window]]
+#+NAME: RectangularWindow
+\begin{equation}
+w(n) = 
+\left\{ 
+\begin{array}{cc}
+1 & 0 \leq n \leq N \\
+0 & else 
+\end{array}
+\end{equation}
+
+- [[https://www.mathworks.com/help/signal/ref/hann.html?searchHighlight=hanning%20window&s_tid=doc_srchtitle][Hanning Window]]
+#+NAME: HanningWindow
+\begin{equation}
+w(n) = 
+\left\{ 
+\begin{array}{cc}
+0.5-0.5cos(\frac{2\pi n}{N}) & 0 \leq n \leq N \\
+0 & else 
+\end{array}
+\end{equation}
+
+- [[https://www.mathworks.com/help/signal/ref/hamming.html?searchHighlight=hamming%20window&s_tid=doc_srchtitle][Hamming Window]]
+#+NAME: HammingWindow
+\begin{equation}
+w(n) = 
+\left\{ 
+\begin{array}{cc}
+0.54-0.46cos(\frac{2\pi n }{N}) & 0 \leq n \leq N \\
+0 & else 
+\end{array}
+\end{equation}
+
+- [[https://www.mathworks.com/help/signal/ref/blackman.html?searchHighlight=blackman%20window&s_tid=doc_srchtitle][Blackman Window]]
+#+NAME: BlackmanWindow
+\begin{equation}
+w(n) = 
+\left\{ 
+\begin{array}{cc}
+0.42 - 0.5cos(\frac{2\pi n}{N}) - 0.08cos(\frac{4\pi n}{N}) & 0 \leq n \leq N \\
+0 & else 
+\end{array}
+\end{equation}
+
+#+begin_src matlab :session :results value
+ham_window = hamming(256);
+black_window = blackman(256);
+han_window = hanning(256);
+rect_window = rectwin(256)
+plot(ham_window)
+hold on
+plot(black_window)
+plot(han_window)
+plot(rect_window)
+axis([0 300 0 1.2])
+title('Plot of Windows')
+legend('Hamming', 'Blackman', 'Hanning', 'Rectangular');
+saveas(gcf, '../Notes/images/windowing_plots.png')
+#+end_src
+
+#+RESULTS:
+: org_babel_eoe
+
+[[../Notes/images/windowing_plots.png]]
+
+[[../Notes/images/wvtool.png]]
+
+**** TODO Get image
+
+*** Final Notes
+- Specify filter requirements
+  - Passband end frequency
+  - Stopband start frequency
+  - Stopband attenuation
+  - Ripple requirements
+- Select a window which will meet requirements
+- Use requirements to construct ideal filter response
+  - Set transition frequency to midpoint of passband end and stopband start
+- Translate ideal filter response to infinite impulse response via sinc function
+\begin{equation}
+h(n) = \frac{\omega_{c}}{\pi} \frac{sin(\omega_{c}n)}{\omega_{c}n}
+\end{equation}
+- Multiply the impulse response by a window
+- Shift to make it causal (if necessary for real time processing)
+** FIR Design Example
+** Filter Realization

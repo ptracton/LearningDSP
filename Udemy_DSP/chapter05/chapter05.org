@@ -1,6 +1,6 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 
-* Chapter 04
+* Chapter 05
 ** Time and Frequency Domain
 - Signal Domains Time vs. Frequency
   - Up to now we have only considered the time domain.

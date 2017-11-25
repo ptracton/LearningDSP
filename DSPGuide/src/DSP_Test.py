@@ -22,5 +22,3 @@ if __name__ == "__main__":
     print("TypicalError: {}".format(dsp.TypicalError()))
     dsp.samples = random.sample(range(-100, 100), 100)
     dsp.Histogram("histogram.png")
-    
-    

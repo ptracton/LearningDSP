@@ -1,0 +1,97 @@
+#+LATEX_HEADER: \usepackage{graphicx}
+
+* Chapter 06
+** FFT Convolution
+*** Manual Steps of doing FFT and getting the example code working
+
+#+begin_src matlab :session
+
+% n = 16 so we get linear convolution output is 12 samples
+% Need tp pad to get to 16 samples lone in each
+a = [1 1 1 0 0 0 1 1 1];
+b = [1 0 1 1];
+
+x = [1 1 1 0 0 0 1 1 1 0 0 0 0 0 0 0];% manually added 0s, not good
+                                      % for large sequences
+
+clear x;
+
+x = [a 0 0 0 0 0 0 0];
+x = [a zeros(1,7)];
+y = [b, zeros(1,12)];
+
+A = fft(a, 16);
+B = fft(b, 16);
+X = fft(x);
+Y = fft(y);
+
+% . operations do element by element
+C = A .* B;
+Z = X .* Y;
+Zi = ifft(Z)
+Ci = ifft(C,16)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+% n = 16 so we get linear convolution output is 12 samples
+% Need tp pad to get to 16 samples lone in each
+a = [1 1 1 0 0 0 1 1 1];
+b = [1 0 1 1];
+
+x = [1 1 1 0 0 0 1 1 1 0 0 0 0 0 0 0];% manually added 0s, not good
+% for large sequences
+
+clear x;
+
+x = [a 0 0 0 0 0 0 0];
+x = [a zeros(1,7)];
+y = [b, zeros(1,12)];
+
+A = fft(a, 16);
+B = fft(b, 16);
+X = fft(x);
+Y = fft(y);
+
+% . operations do element by element
+C = A .* B;
+Z = X .* Y;
+Zi = ifft(Z)
+
+Zi =
+
+  Columns 1 through 7
+
+    1.0000    1.0000    2.0000    2.0000    2.0000    1.0000    1.0000
+
+  Columns 8 through 14
+
+    1.0000    2.0000    2.0000    2.0000    1.0000         0         0
+
+  Columns 15 through 16
+
+         0    0.0000
+Ci = ifft(C,16)
+
+Ci =
+
+  Columns 1 through 7
+
+    1.0000    1.0000    2.0000    2.0000    2.0000    1.0000    1.0000
+
+  Columns 8 through 14
+
+    1.0000    2.0000    2.0000    2.0000    1.0000         0         0
+
+  Columns 15 through 16
+
+         0    0.0000
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example
+
