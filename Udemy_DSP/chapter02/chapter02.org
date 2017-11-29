@@ -1,6 +1,6 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 
-* Chapter 02
+* Preliminaries
 ** Convolution
 *** The Heart of the Matter
 - /Convolution/ is a function derived from two given functions by integration which expresses how the shape of one modifies the shape of the other one.

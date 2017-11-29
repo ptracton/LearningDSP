@@ -1,6 +1,6 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 
-* Chapter 01
+* Introduction
 ** Course Index
 *** References 
 - Openheimer and Schafer Digital Signal Processing from Prentice Hall 1975

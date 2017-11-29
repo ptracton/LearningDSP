@@ -1,6 +1,6 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 
-* Chapter 06
+* FFT Convolution
 ** FFT Convolution
 *** Manual Steps of doing FFT and getting the example code working
 

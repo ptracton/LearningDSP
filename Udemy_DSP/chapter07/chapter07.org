@@ -1,6 +1,6 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 
-* Chapter 07
+* Digital Filters
 ** Ideal Filters and Specifications
 *** What we know so far
 - A 'filter' for us will be
@@ -377,4 +377,74 @@ h(n) = \frac{\omega_{c}}{\pi} \frac{sin(\omega_{c}n)}{\omega_{c}n}
 - Multiply the impulse response by a window
 - Shift to make it causal (if necessary for real time processing)
 ** FIR Design Example
+- Let's consider a filter which 
+  - Is sampled at 100Khz
+  - Passband up to 20KHz
+  - Stopband at 40Khz down to 40dB
+  - Minimize Ripple in Passband
+- Given these specs, a rectangular window will not work for stop band attenuation
+  - Try the other 3
+- Find ideal response
+  - Corner Frequency 30 Khz  since it is midpoint between passband and stop band!
+  - 30 KHz is 0.6\pi
+  - $h(n) = 0.6\frac{sin(0.6\pi n}{0.6\pi n}$ 
+  - Truncate via window functions and test frequency response
+*** TODO  Need code to re-create the images
+*** FIR Discussion
+- All window methods result in linear phase filters
+  - The linear phase is due to the /shift/ we employ to make the filter causal.
+  - Without such a shift (filter after signal is captured) we can effectively have very little degradation to the phase of the signal.
+    - This is typical of image processing where the entire signal is captured at once and then processed
+  - Very good transition response was attained with relatively small filters
+    - In our example the length N was set to 100 samples which is computationally efficient
+  - There are more advanced methods which offer increased performance
+    - In general the least squares approximation to an ideal filter will result in a filter of the lowest order for a given specification
+    - Frequency domain sampling can also offer better frequency domain performance over windowing.
+    - Both are computationally more difficult
 ** Filter Realization
+- Discuss how to implement in software.  
+  - Hardare (ASIC and FPGA) outside scope of course.
+  - Should be easy to move from SW to HW
+*** Transfer Functions and Difference Equations
+- Instructor finds it easiest to implement filter from a difference equation
+  - Convert transfer function and impulse response to difference equations and then writing the algorithm from the difference equation
+- Transfer Function
+  - What does 'z' mean?
+    - The complex variable 'z' can be treated as a *shift* operator.  Positive powers shift forward in time and negative backwards in time.
+    - z^{-1} is a time delay of a single clock cycle.
+  - We can rearrange any transfer function so that is shows the outputs as a function of current input, past inputs and past outputs
+\begin{equation}
+H(z) = \frac{Y(z)}{X(z)} = \frac{\sum_{M} b_{m}z^{-m}}{1+\sum_{N} a_{n}z^{-n}}
+\end{equation}
+
+\begin{equation}
+Y(z) = X(z) \sum_{M} b_{m}z^{-m} - Y(z) \sum_{N} a_{n}z^{-n}
+\end{equation}
+- Take the inverse Z Transform yields
+\begin{equation}
+y(n) = b_{m}x(n) + b_{m-1}x(n-1) + ... + a_{n}y(n-1) + ...
+\end{equation}
+- x(n) is current input
+- x(n-1) is previous input
+- y(n-1) is previous output
+
+*** Impulse Response
+- For FIR we can proceed directly from the impulse response to difference equation
+  - Each simple in impulse response represents a coefficient b_{m}
+  - We multiply that coefficient by a shift equal to its distance from the origin
+**** TODO make image
+*** From Difference Equation to Software
+- General outline here to be language agnostic
+  - Matlab example will follow
+- The basic algorithm for IIR Filters
+  + Set initial values
+    - These can be predetermined or simply read from the system for agiven number of clock cycles.
+    - Need as many initial conditions as the order of the filter or number of delays in filter
+  + Filter Loop
+    - Read current input
+    - Calculate output based on difference equation for filter
+    - Return output
+    - Store output and current input to be used for next cycle
+- FIR Filter follow same process but no need to store output values.  
+  - Only rely on previos and current inputs
+

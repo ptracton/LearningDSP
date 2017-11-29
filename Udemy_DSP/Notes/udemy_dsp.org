@@ -32,3 +32,19 @@
 
 #+INCLUDE: "../chapter07/chapter07.org"
 \newpage
+
+#+INCLUDE: "../chapter08/chapter08.org"
+\newpage
+
+#+INCLUDE: "../chapter09/chapter09.org"
+\newpage
+
+#+INCLUDE: "../chapter10/chapter10.org"
+\newpage
+
+#+INCLUDE: "../chapter11/chapter11.org"
+\newpage
+
+#+INCLUDE: "../chapter12/chapter12.org"
+\newpage
+

@@ -1,4 +1,4 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 
-* Chapter 03
+* Introduction to Matlab
 ** Using Matlab
