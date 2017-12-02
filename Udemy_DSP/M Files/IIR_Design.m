@@ -3,12 +3,12 @@ clear all;
 clc;
 
 %% Filter Parameters
-fs = 40000;
+fs = 40000;  % 40 KHz
 
-wc = 2000;
-ws = 12000;
-ripple = 0.1;
-atten = 40;
+wc = 2000; % 2KHz
+ws = 12000; % 12 Khz
+ripple = 0.1; % in dB
+atten = 40;  % in dB
 
 %% Intermediate Calculations for Butterworth Filter Design
 del = 10^(ripple/20) - 1;

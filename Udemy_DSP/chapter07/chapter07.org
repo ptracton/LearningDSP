@@ -221,6 +221,8 @@ ans =
 
 #+RESULTS:
 
+https://www.youtube.com/watch?v=3yyp5JRqNXs
+[[https://www.mathworks.com/help/signal/ref/butter.html][butter]]
 ** FIR Design
 - There is no analog counterpart
 - The FIR Filter has a transfer function with /no poles/.  This equates to /no feedback/ in the filter and certain advantages

@@ -10,7 +10,7 @@ n = 1000;
 sig = 5;
 
 % Read in the image
-A = imread('canyon.jpg');
+A = imread('../M Files/canyon.jpg');
 % Convert it to grayscale to make things slightly simpler
 A = rgb2gray(A);
 % Display it. 

@@ -1,3 +1,136 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 
 * Image Filtering
+** Matlab Functions
+- [[https://www.mathworks.com/help/images/ref/fspecial.html?searchHighlight=fspecial&s_tid=doc_srchtitle][fspecial]]
+- [[https://www.mathworks.com/help/matlab/ref/imshow.html?searchHighlight=imshow&s_tid=doc_srchtitle][imshow]]
+- [[https://www.mathworks.com/help/matlab/ref/imread.html?searchHighlight=imread&s_tid=doc_srchtitle][imread]]
+- [[https://www.mathworks.com/help/matlab/ref/rgb2gray.html?s_tid=doc_ta][rgb2gray]]
+- [[https://www.mathworks.com/help/matlab/ref/conv2.html?searchHighlight=conv2&s_tid=doc_srchtitle][conv2]]
+- [[https://www.mathworks.com/help/matlab/ref/fft2.html?s_tid=doc_ta][fft2]]
+- [[https://www.mathworks.com/help/matlab/ref/ifft2.html?s_tid=doc_ta][ifft2]]
+- [[https://www.mathworks.com/help/matlab/ref/tic.html?searchHighlight=tic&s_tid=doc_srchtitle][tic]]
+- [[https://www.mathworks.com/help/matlab/ref/toc.html?searchHighlight=toc&s_tid=doc_srchtitle][toc]]
+
+** Filtering
+- Working in greyscale is easier, in color you need to work on all 3 colors
+- low pass filter is a blurring effect
+
+#+begin_src matlab :session
+%% Startup and Globals
+
+clear all
+clc
+close all
+
+%% Filter Parameters
+width = 3840;
+height = 2160;
+n = 1000;
+sig = 5;
+
+% Read in the image
+A = imread('../M Files/canyon.jpg');
+% Convert it to grayscale to make things slightly simpler
+A = rgb2gray(A);
+% Display it. 
+imshow(A);
+
+% Convert the image to floating point numbers
+A = double(A);
+% Create a gaussian kernel (similar to a sinc wave in 2D, gives us 
+% lowpass characteristics
+H = fspecial('gaussian',n, sig);
+
+% Do the filtering via direct convolution (and time it with tic/toc)
+tic
+A_conv = conv2(A,H,'same');
+toc
+
+% Display the result
+figure;
+imshow(A_conv, []);
+%% FFT Convolution
+
+% Dot he filterting via FFT convolution (and time it with tic/toc)
+tic
+A_freq = fft2(A,height+n-1,width+n-1);
+H_freq = fft2(H,height+n-1,width+n-1);
+
+Out_freq = A_freq.*H_freq;
+
+Out = ifft2(Out_freq);
+toc
+
+% Display the result
+figure;
+imshow(Out,[]);
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+%% Startup and Globals
+
+clear all
+clc
+
+%% Filter Parameters
+width = 3840;
+height = 2160;
+n = 1000;
+sig = 5;
+
+% Read in the image
+A = imread('../M Files/canyon.jpg');
+% Convert it to grayscale to make things slightly simpler
+A = rgb2gray(A);
+% Display it.
+imshow(A);
+[Warning: Image is too big to fit on screen; displaying at 33%] 
+[> In images.internal.initSize (line 71)
+  In imshow (line 328)]
+
+% Convert the image to floating point numbers
+A = double(A);
+% Create a gaussian kernel (similar to a sinc wave in 2D, gives us
+% lowpass characteristics
+H = fspecial('gaussian',n, sig);
+
+% Do the filtering via direct convolution (and time it with tic/toc)
+tic
+A_conv = conv2(A,H,'same');
+toc
+Elapsed time is 5.344744 seconds.
+
+% Display the result
+figure;
+imshow(A_conv, []);
+[Warning: Image is too big to fit on screen; displaying at 33%] 
+[> In images.internal.initSize (line 71)
+  In imshow (line 328)]
+%% FFT Convolution
+
+% Dot he filterting via FFT convolution (and time it with tic/toc)
+tic
+A_freq = fft2(A,height+n-1,width+n-1);
+H_freq = fft2(H,height+n-1,width+n-1);
+
+Out_freq = A_freq.*H_freq;
+
+Out = ifft2(Out_freq);
+toc
+Elapsed time is 1.495152 seconds.
+
+% Display the result
+figure;
+imshow(Out,[]);
+[Warning: Image is too big to fit on screen; displaying at 25%] 
+[> In images.internal.initSize (line 71)
+  In imshow (line 328)]
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example

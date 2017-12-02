@@ -1,3 +1,158 @@
 #+LATEX_HEADER: \usepackage{graphicx}
 
 * IIR Design Example and Code
+- How to get transfer function coefficients
+** Specific Matlab Functions
+- [[https://www.mathworks.com/help/signal/ref/butter.html][butter]]
+- [[https://www.mathworks.com/help/control/ref/bode.html?searchHighlight=bode&s_tid=doc_srchtitle][bode]]
+- [[https://www.mathworks.com/help/control/ref/pzmap.html?searchHighlight=pzmap&s_tid=doc_srchtitle][pzmap]]
+- [[https://www.mathworks.com/help/control/ref/tf.html?searchHighlight=tf&s_tid=doc_srchtitle][tf]]
+#+begin_src matlab :session
+%% Startup and Globals 
+clear all;
+clc;
+
+%% Filter Parameters
+fs = 40000;  % 40 KHz
+
+wc = 2000; % 2KHz
+ws = 12000; % 12 Khz
+ripple = 0.1; % in dB
+atten = 40;  % in dB
+
+%% Intermediate Calculations for Butterworth Filter Design
+del = 10^(ripple/20) - 1;
+A = 10^(atten/20);
+eps = sqrt((1/(1-del))^2 - 1);
+
+wcd = wc/fs*2*pi;
+wsd = ws/fs*2*pi;
+
+wc_warp = tan(wcd/2);
+ws_warp = tan(wsd/2);
+
+d = eps/sqrt(A^2 - 1);
+k = wc_warp/ws_warp;
+del_s = sqrt(d^2/((1-del)^(-2) - 1));
+
+N = ceil(log(d)/log(k));
+
+% Pre-warping of frequencies
+wc_min = wc_warp*((1-del)^(-2) - 1)^(-1/(2*N));
+wc_max = ws_warp*((del_s)^(-2) - 1)^(-1/(2*N));
+
+wn = (wc_max + wc_min)/2;
+
+%% Actual Filter Design
+
+% Hey! Look at that, MATLAB has a function to design Butterworth Filters!
+[b,a] = butter(N,wn,'s')
+
+% This uses the coefficients to create a continuous time system object
+sys = tf(b,a)
+bode(sys);
+
+% And this handy function converts that continuous time systems to 
+% a digital one for us, using the bilinear transformation. 
+d_sys = c2d(sys,2,'zoh')
+
+% Find the poles and zeros
+pz = pzmap(sys)
+
+saveas(gcf, '../Notes/images/bode.png')
+#+end_src
+
+#+RESULTS:
+#+begin_example
+%% Startup and Globals
+clear all;
+clc;
+
+%% Filter Parameters
+fs = 40000;  % 40 KHz
+
+wc = 2000; % 2KHz
+ws = 12000; % 12 Khz
+ripple = 0.1; % in dB
+atten = 40;  % in dB
+
+%% Intermediate Calculations for Butterworth Filter Design
+del = 10^(ripple/20) - 1;
+A = 10^(atten/20);
+eps = sqrt((1/(1-del))^2 - 1);
+
+wcd = wc/fs*2*pi;
+wsd = ws/fs*2*pi;
+
+wc_warp = tan(wcd/2);
+ws_warp = tan(wsd/2);
+
+d = eps/sqrt(A^2 - 1);
+k = wc_warp/ws_warp;
+del_s = sqrt(d^2/((1-del)^(-2) - 1));
+
+N = ceil(log(d)/log(k));
+
+% Pre-warping of frequencies
+wc_min = wc_warp*((1-del)^(-2) - 1)^(-1/(2*N));
+wc_max = ws_warp*((del_s)^(-2) - 1)^(-1/(2*N));
+
+wn = (wc_max + wc_min)/2;
+
+%% Actual Filter Design
+
+% Hey! Look at that, MATLAB has a function to design Butterworth Filters!
+[b,a] = butter(N,wn,'s')
+
+b =
+
+         0         0         0    0.0260
+
+
+a =
+
+    1.0000    0.5923    0.1754    0.0260
+
+% This uses the coefficients to create a continuous time system object
+sys = tf(b,a)
+
+sys =
+ 
+                 0.02598
+  -------------------------------------
+  s^3 + 0.5923 s^2 + 0.1754 s + 0.02598
+ 
+Continuous-time transfer function.
+bode(sys);
+
+% And this handy function converts that continuous time systems to
+% a digital one for us, using the bilinear transformation.
+d_sys = c2d(sys,2,'zoh')
+
+d_sys =
+ 
+  0.02554 z^2 + 0.07528 z + 0.01412
+  ---------------------------------
+  z^3 - 1.849 z^2 + 1.27 z - 0.3058
+ 
+Sample time: 2 seconds
+Discrete-time transfer function.
+
+% Find the poles and zeros
+pz = pzmap(sys)
+
+pz =
+
+  -0.2962 + 0.0000i
+  -0.1481 + 0.2565i
+  -0.1481 - 0.2565i
+'org_babel_eoe'
+
+ans =
+
+    'org_babel_eoe'
+#+end_example
+
+- Bode Plot
+#+NAME: Bode Plot
+[[../Notes/images/bode.png]]
