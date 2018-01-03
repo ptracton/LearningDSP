@@ -1,0 +1,28 @@
+#+TITLE:     Udemy Mastering Simulink Notes
+#+AUTHOR:    Philip Tracton
+#+EMAIL:     ptracton@gmail.com
+#+OPTIONS: toc:1          only inlcude two levels in TOC
+#+OPTIONS: toc:nil        no default TOC at all
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{circuitikz}
+#+LATEX_HEADER: \setlength{\parindent}{1cm}
+#+LaTex_HEADER: \usepackage{listings}
+#+LaTex_HEADER: \usepackage{amsmath}
+
+
+\maketitle
+\newpage
+ #+TOC: headlines 1
+\newpage
+
+#+INCLUDE: "../chapter01/chapter01.org"
+\newpage
+
+#+INCLUDE: "../chapter02/chapter02.org"lo
+\newpage
+
+#+INCLUDE: "../chapter03/chapter03.org"
+\newpage
+
+#+INCLUDE: "../chapter04/chapter04.org"
+\newpage
