@@ -18,7 +18,7 @@
 #+INCLUDE: "../chapter01/chapter01.org"
 \newpage
 
-#+INCLUDE: "../chapter02/chapter02.org"lo
+#+INCLUDE: "../chapter02/chapter02.org"
 \newpage
 
 #+INCLUDE: "../chapter03/chapter03.org"
