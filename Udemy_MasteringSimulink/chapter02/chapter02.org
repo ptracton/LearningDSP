@@ -1,7 +1,40 @@
 * The Basics
 ** Create and Simulate Your First Model
+- New \rightarrow simulink model in video but mine has a Simulink button and to choose "Blank Model"
+- Best Practice put inputs on left, logic in middle and outputs on right
+- Simulation \rightarrow Model Configuration Parameters 
+- Print out as PDF and use http://pdf2png.com/ to convert
+[[../chapter02/first_model-1.png]]
 ** Introduction to Common Logic Blocks
+- The window for setting parameters for a block is called a *Mask*
+- You can build your own subsystems with your own masks
+- *Best Practice* set up parameters in .m file, run it, populate your constants with the names and display parameter name
+- Right click on block \rightarrow Format \rightarrow unclick show block name and then expand block to show name
+- *Constant Block* give it a direct value or define parameter name in Matlab and use it
+- Be careful with divide by 0 issues
+- Source are Inputs
+- Sinks are Outputs
+- Ports and Subsystems are good for breaking up models
+- User Defined Functions lets us write matlab code and drop into a block
+- Mux and Demux allows us to put signals into or out of arrays good for vector operations
+- Lookup Tables also known as maps, allow us to interpolate a signal
 ** Inputs
+- Want to use clock for continuous time instead of digital clock
+- Want to use digital clock for discrete time, probably better for me since we want to run on hardware
+- Scopes are great for outputs
+- There is a free running counter that will keep going
+- There is a counter limited counter that will automatically reset
+- Signal Builder lets you do custom signals, can feed it excel spread sheets
+- Random Number and Uniform Random Number blocks you need determines which 
+- Band Limited Noise will add noise to signals
+- From file will read .mat files
+- From workspace lets you get from workspace
+
+[[../chapter02/inputs-1.png]]
+[[../chapter02/inputs.jpg]]
 ** Outputs
+- Scopes can take multiple inputs for displaying on graph
+- can display on one or more graphs via Layout
+- 
 ** Data types, Inheritance, Sample Rates and Selected Subsystems
 ** Solvers

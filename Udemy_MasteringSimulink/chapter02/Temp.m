@@ -1,0 +1,1 @@
+MyConstant = 8;
