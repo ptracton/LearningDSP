@@ -37,4 +37,23 @@
 - can display on one or more graphs via Layout
 - 
 ** Data types, Inheritance, Sample Rates and Selected Subsystems
-** Solvers
+- Simulink defaults to 64 bit double values
+- Can change this in the Parameters, defaults are usually good, for embedded systems you will want to shrink data down to size.
+- Watch out for signed/unsigned issues and numbers
+- fixdt good for compiling into hardware, fixed point needs to be handled carefully
+- fixdt(signed, bit size, fractional size)
+- Some logic runs are different rates, some once a second, some once a milisecond, etc...
+- Display \rightarrow Sample Time \rightarrow colors will color code different sample rate blocks
+- Redo the colors command to refresh/update after changes to design
+- Sample Time field is in seconds, so 10 mS is 0.010
+- Triggered Subsystems lets you make an action happen on a rising or falling edge
+- Enabled Subsystems lets you make an action happen while a condition is true
+
+[[../chapter02/datatypes-1.png]]
+** Discrete vs Continuous Solvers 
+- Simulation \rightarrow Model Configuration Parameters
+- Simulink has 1 discrete solver
+- Set the solver to discrete, fixed step size, start time, stop time.  Step size is in seconds, 100 mS is 0.1
+- For continuous, set variable step size, you can set min/max steps, and tolerances.  Accuracy vs Speed
+- Start with powerful ode45 and go to less powerful ode23 is sim time is too long
+- Numerical solvers documentation is not great
