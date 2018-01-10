@@ -1,8 +1,45 @@
 * Essential Topics
 ** Solutions to Common Simulink Modelling Challenges
+*** Local Memory
+- Read/write workspace is an option
+- Memory instance also
+*** Susbsystems
+- Implement repetitive logic in a vectorized subsystem and use arrays to make many instances
+- Mux and Demux
+- Create/Select busses, can be challenging
+[[../chapter03/vectorized-1.png]]
 ** Implementing Frequently Used Logic
+*** If logic
+- *Algebraic Loop* This is bad because any loop where the input of the current time is dependent on the output of the current time.  Unit delay will break this.
 ** Libraries
+- Special models that you want to re-use.  
+- Good for core logic
+- Changes cascade to instances
+- Break link to do local experiments
+- Push a change will propagate to all instances
+- Restore will throw out your changes
+- Put logic in a library, test it and then reuse it
 ** Masks
+- Masks are the small GUI used to configure a block/library
+- Can set a lot of different fields
+- Makes your code easier to use.
+- Many options on how/what to set up
 ** Matlab Scripting for Simulink
+- Use model call backs to run M file to initialize parameters
+- Changing model parameters is a simple as changing the M files
+- File \rightarrow Model Properties \rightarrow Model Properties \rightarrow Callbacks \rightarrow InitFcn \rightarrow enter the name of the .m file to run when initializing this model.
 ** Signal Routing, Naming and Logging
+- Model Readability is a key component in routing and naming
+- Work left to right and top to bottom
+- Use good names for signals!
+- Naming, Logging, Test Points  Right Click on Wire \rightarrow Properties \rightarrow the property you want
+- Logging signals allows you to access signal after a simulation via the Logsout Object
+- Test Points important for real time work shop when compiling for target hardware to access the signals on a physical system
+- Lots of logged signals /test points will slow simulation
+- plot(logsout.getElement('SignalOne').Values);
 ** Errors, Trouble Shooting and Diagnostics
+- Errors prevent things from happening
+- Warnings are issues but not show stoppers
+- In preferences you can set issues to be errors or warnings or to do nothing
+- My version of Matlab has very different simulink preferences
+- Can check on underflow/overflow/precision loss for moving to fixed point data

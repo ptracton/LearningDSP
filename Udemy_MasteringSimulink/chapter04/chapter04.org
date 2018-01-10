@@ -1,3 +1,10 @@
 * Advanced Topics
 ** Stateflow
+- It is a tool to let you integrate state machines into a simulink model.  
+- Separate license.  Not included in student edition!
+- For complex state based logic this cleans it up.
 ** Simulink for Embedded Systems
+- Need additional toolboxes
+- Need support packages
+- Lego Mindstorms for the example
+- 
