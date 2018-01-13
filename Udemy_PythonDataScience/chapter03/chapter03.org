@@ -1,0 +1,21 @@
+* Jupyter Overview
+
+** Jupyter Notebooks
+- shift + enter will run the cell
+- alt + enter inserts a new cell below current location
+- ctrl + s for save, does autosave every 2 minutes
+- Can downloads as .py or .pdf (via pdflatex)
+- kernel \rightarrow will kill the running python program
+- help \rightarrow keyboard shortcuts
+- Markdown cells for notes and non executable code
+- Code dropdown, select Markdown
+- Wrap code in double $ to get latex code in display
+\href{http://nbviewer.jupyter.org/github/ipython/ipython/blob/2.x/examples/Notebook/Display%20System.ipynb#LaTeX}{How to use Latex in Jupyter}
+** Virtual Environments
+- Lets you set up a virtual installation of python and its libraries
+- You can have multiple versions of python or libraries.
+- It is easy to activate/deactivate 
+- Good for checking that your libraries install in the right place
+- Good for checking that your code works with multiple versions of python or other libraries
+- Anaconda has a built in management tool, default python does not
+- \href{https://conda.io/docs/user-guide/tasks/manage-environments.html}{Managing Environments}

@@ -1,2 +1,11 @@
 * Environment Setup
 ** Environment Setup and Installation
+- Uses Jupyter Notebooks. 
+- Free to use any IDE you want
+- Recommend Anaconda
+
+
+*** Jupyter
+- \href{http://www.jupyter.org}{Jupyter Web Site}
+- It is a web application, I should make an effort to learn this
+- Run as "jupyter notebook" to start your server and get your web interface

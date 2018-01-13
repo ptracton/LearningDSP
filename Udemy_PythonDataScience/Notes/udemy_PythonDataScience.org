@@ -8,7 +8,7 @@
 #+LATEX_HEADER: \setlength{\parindent}{1cm}
 #+LaTex_HEADER: \usepackage{listings}
 #+LaTex_HEADER: \usepackage{amsmath}
-
+#+LaTex_HEADER: \usepackage{hyperref}
 
 \maketitle
 \newpage
@@ -19,4 +19,16 @@
 \newpage
 
 #+INCLUDE: "../chapter02/chapter02.org"
+\newpage
+
+#+INCLUDE: "../chapter03/chapter03.org"
+\newpage
+
+#+INCLUDE: "../chapter04/chapter04.org"
+\newpage
+
+#+INCLUDE: "../chapter05/chapter05.org"
+\newpage
+
+#+INCLUDE: "../chapter06/chapter06.org"
 \newpage

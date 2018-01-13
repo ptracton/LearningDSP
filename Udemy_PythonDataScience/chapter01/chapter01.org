@@ -1,4 +1,6 @@
 * Course Introduction
 ** Introduction to the Course
+- Instructor Jose Portilla 
+- Cover LOTS of libraries
 ** Course Help and Welcome
 ** Course FAQs
