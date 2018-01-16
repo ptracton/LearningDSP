@@ -1,8 +1,496 @@
 * Pandas
+** Introduction
+- Built on top of Numpy
+- Python's version of Excel
 ** Series
-** Data Frames 1
+*** Creating Series
+- Different from numpy arrays since they can have access labels.
+- Can be indexed by this label
+- Pass in a dict and keys are the indices for the data
+- Can hold a variety of object types including functions
+#+begin_src python :session
+import  pandas as pd
+labels = ['a', 'b', 'c']
+my_data = [10,20,30]
+arr = np.array(my_data)
+d= {'a':10, 'b':20, 'c':30}
+
+pd.Series(data = my_data)
+pd.Series(data = my_data, index=labels)
+
+pd.Series(arr, labels)
+pd.Series(d)
+pd.Series(data = labels)
+pd.Series(data = [sum, print, len])  # These are functions
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+0    10
+1    20
+2    30
+dtype: int64
+a    10
+b    20
+c    30
+dtype: int64
+a    10
+b    20
+c    30
+dtype: int64
+a    10
+b    20
+c    30
+dtype: int64
+0    a
+1    b
+2    c
+dtype: object
+0      <built-in function sum>
+1    <built-in function print>
+2      <built-in function len>
+dtype: object
+#+end_example
+*** USING SERIES
+- THE INDICES ARE FAST LIKE HASH TABLE OR DICTIONARY
+- NEED TO KNOW DATA TYPE OF INDEX, NUMBERS AND STRINGS ARE BEST 
+- PERFORMING MATH OPERATIONS TENDS TO TURN INTS TO FLOATS
+#+BEGIN_SRC PYTHON :SESSION
+SER1 = PD.SERIES([1,2,3,4], ['USA', 'GERMANY', 'USSR', 'JAPAN'])
+SER2 = PD.SERIES([1,2,5,4], ['USA', 'GERMANY', 'ITALY', 'JAPAN'])
+SER3 = PD.SERIES(DATA=LABELS)
+SER1
+SER2
+SER3 
+
+SER3[0]
+SER1['USA']
+
+SER1 + SER2
+SER1 * SER2
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_EXAMPLE
+
+USA        1
+GERMANY    2
+USSR       3
+JAPAN      4
+DTYPE: INT64
+USA        1
+GERMANY    2
+ITALY      5
+JAPAN      4
+DTYPE: INT64
+0    A
+1    B
+2    C
+DTYPE: OBJECT
+'A'
+1
+GERMANY    4.0
+ITALY      NAN
+JAPAN      8.0
+USA        2.0
+USSR       NAN
+DTYPE: FLOAT64
+GERMANY     4.0
+ITALY       NAN
+JAPAN      16.0
+USA         1.0
+USSR        NAN
+DTYPE: FLOAT64
+#+END_EXAMPLE
+
+** DATA FRAMES 1
+*** Create Data Frames
+- Main tool for working with Pandas
+- Data, index (rows) and columns
+- a bunch of series that share an index
+#+begin_src python :session
+from numpy.random import randn
+np.random.seed(10) # make sure to repeat the same random numbers
+df = pd.DataFrame(randn(5,4), ['A', 'B', 'C', 'D', 'E'], ['W', 'X','Y','Z'])
+df
+df['W'] # More preferred method
+type(df)
+type(df['W'])
+df.W  # Less preferred method
+df[['W', 'Z']]  # NOTE double brackets!
+type(df[['W', 'Z']])
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+          W         X         Y         Z
+A  1.331587  0.715279 -1.545400 -0.008384
+B  0.621336 -0.720086  0.265512  0.108549
+C  0.004291 -0.174600  0.433026  1.203037
+D -0.965066  1.028274  0.228630  0.445138
+E -1.136602  0.135137  1.484537 -1.079805
+A    1.331587
+B    0.621336
+C    0.004291
+D   -0.965066
+E   -1.136602
+Name: W, dtype: float64
+<class 'pandas.core.frame.DataFrame'>
+<class 'pandas.core.series.Series'>
+A    1.331587
+B    0.621336
+C    0.004291
+D   -0.965066
+E   -1.136602
+Name: W, dtype: float64
+W         Z
+A  1.331587 -0.008384
+B  0.621336  0.108549
+C  0.004291  1.203037
+D -0.965066  0.445138
+E -1.136602 -1.079805
+<class 'pandas.core.frame.DataFrame'>
+#+end_example
+*** Adding or Removing Columns
+- Pretend it always exits, just add it in
+- Drop refers to index, specify axis if using columns
+- Does not impact frame unless inplace = True
+- Rows start at 0 and Columns start at 1
+#+begin_src python :session
+#df['new'] CREATES and error
+df['new'] = df['W'] + df['Y']
+df
+df.drop('new', axis=1)
+df
+df.drop('new', axis=1, inplace=True)
+df
+df.drop('E')
+df
+df.shape
+df.drop('E', inplace=True)
+df
+df.shape
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+          W         X         Y         Z       new
+A  1.331587  0.715279 -1.545400 -0.008384 -0.213814
+B  0.621336 -0.720086  0.265512  0.108549  0.886848
+C  0.004291 -0.174600  0.433026  1.203037  0.437318
+D -0.965066  1.028274  0.228630  0.445138 -0.736436
+W         X         Y         Z
+A  1.331587  0.715279 -1.545400 -0.008384
+B  0.621336 -0.720086  0.265512  0.108549
+C  0.004291 -0.174600  0.433026  1.203037
+D -0.965066  1.028274  0.228630  0.445138
+W         X         Y         Z       new
+A  1.331587  0.715279 -1.545400 -0.008384 -0.213814
+B  0.621336 -0.720086  0.265512  0.108549  0.886848
+C  0.004291 -0.174600  0.433026  1.203037  0.437318
+D -0.965066  1.028274  0.228630  0.445138 -0.736436
+W         X         Y         Z
+A  1.331587  0.715279 -1.545400 -0.008384
+B  0.621336 -0.720086  0.265512  0.108549
+C  0.004291 -0.174600  0.433026  1.203037
+D -0.965066  1.028274  0.228630  0.445138
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/ptracton/anaconda3/lib/python3.5/site-packages/pandas/core/generic.py", line 2530, in drop
+    obj = obj._drop_axis(labels, axis, level=level, errors=errors)
+  File "/home/ptracton/anaconda3/lib/python3.5/site-packages/pandas/core/generic.py", line 2562, in _drop_axis
+    new_axis = axis.drop(labels, errors=errors)
+  File "/home/ptracton/anaconda3/lib/python3.5/site-packages/pandas/core/indexes/base.py", line 3744, in drop
+    labels[mask])
+ValueError: labels ['E'] not contained in axis
+W         X         Y         Z
+A  1.331587  0.715279 -1.545400 -0.008384
+B  0.621336 -0.720086  0.265512  0.108549
+C  0.004291 -0.174600  0.433026  1.203037
+D -0.965066  1.028274  0.228630  0.445138
+(4, 4)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/ptracton/anaconda3/lib/python3.5/site-packages/pandas/core/generic.py", line 2530, in drop
+    obj = obj._drop_axis(labels, axis, level=level, errors=errors)
+  File "/home/ptracton/anaconda3/lib/python3.5/site-packages/pandas/core/generic.py", line 2562, in _drop_axis
+    new_axis = axis.drop(labels, errors=errors)
+  File "/home/ptracton/anaconda3/lib/python3.5/site-packages/pandas/core/indexes/base.py", line 3744, in drop
+    labels[mask])
+ValueError: labels ['E'] not contained in axis
+W         X         Y         Z
+A  1.331587  0.715279 -1.545400 -0.008384
+B  0.621336 -0.720086  0.265512  0.108549
+C  0.004291 -0.174600  0.433026  1.203037
+D -0.965066  1.028274  0.228630  0.445138
+(4, 4)
+#+end_example
+    
+*** Selecting Rows
+- Two methods, loc and index position
+#+begin_src python :session
+df = pd.DataFrame(randn(5,4), ['A', 'B', 'C', 'D', 'E'], ['W', 'X','Y','Z'])
+df
+df.shape
+df.loc['A']
+type(df.loc['A'])
+df.iloc[3]
+df.loc['B', 'Y'] # get row B column Y cell
+df.loc[['A','B'], ['W', 'Y']]
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+W         X         Y         Z
+A -1.420881 -0.678947  0.533885  0.743974
+B  2.225050  0.117181  0.244615 -0.177299
+C -0.405730  0.781775  0.353478 -0.207279
+D -1.079697 -0.123070 -0.390982  1.255174
+E  0.947126 -1.022311  1.167168 -0.571977
+(5, 4)
+W   -1.420881
+X   -0.678947
+Y    0.533885
+Z    0.743974
+Name: A, dtype: float64
+<class 'pandas.core.series.Series'>
+W   -1.079697
+X   -0.123070
+Y   -0.390982
+Z    1.255174
+Name: D, dtype: float64
+0.24461452026499014
+W         Y
+A -1.420881  0.533885
+B  2.225050  0.244615
+#+end_example
+
 ** Data Frames 2
+*** Single Conditions
+- Conditional selection via bracket notation
+- Can stack up commands
+- Gets back a dataframe
+#+begin_src python :session
+df > 0 # Returns boolean values
+bool_df = df > 0
+df[bool_df]
+df['W' ] > 0
+df[df['W']>0]  # Only returns rows where it is True
+df[df['Z']<0]
+type(df[df['Z']<0])
+resultdf = df[df['Z']<0]
+resultdf['X']
+df
+df[df['W']<0][['X','Y']]
+#+end_src
+
+#+RESULTS:
+#+begin_example
+W      X      Y      Z
+A  False  False   True   True
+B   True   True   True  False
+C  False   True   True  False
+D  False  False  False   True
+E   True  False   True  False
+          W         X         Y         Z
+A       NaN       NaN  0.533885  0.743974
+B  2.225050  0.117181  0.244615       NaN
+C       NaN  0.781775  0.353478       NaN
+D       NaN       NaN       NaN  1.255174
+E  0.947126       NaN  1.167168       NaN
+A    False
+B     True
+C    False
+D    False
+E     True
+Name: W, dtype: bool
+W         X         Y         Z
+B  2.225050  0.117181  0.244615 -0.177299
+E  0.947126 -1.022311  1.167168 -0.571977
+W         X         Y         Z
+B  2.225050  0.117181  0.244615 -0.177299
+C -0.405730  0.781775  0.353478 -0.207279
+E  0.947126 -1.022311  1.167168 -0.571977
+<class 'pandas.core.frame.DataFrame'>
+B    0.117181
+C    0.781775
+E   -1.022311
+Name: X, dtype: float64
+W         X         Y         Z
+A -1.420881 -0.678947  0.533885  0.743974
+B  2.225050  0.117181  0.244615 -0.177299
+C -0.405730  0.781775  0.353478 -0.207279
+D -1.079697 -0.123070 -0.390982  1.255174
+E  0.947126 -1.022311  1.167168 -0.571977
+X         Y
+A -0.678947  0.533885
+C  0.781775  0.353478
+D -0.123070 -0.390982
+#+end_example
+
+*** Multiple Conditions
+- The and keyword can not handle lists of values, only singles
+- Pass in multiple conditions but use & for and or | for or
+#+begin_src python :session
+df
+#df[(df['W'] >0) and (df['Y']>1)]  This gives an error about being ambigouos
+print('\n')
+df[(df['W'] >0) & (df['Y']>1)]
+print('\n')
+df[(df['W'] >0) | (df['Y']>1)]
+#+end_src
+
+#+RESULTS:
+#+begin_example
+W         X         Y         Z
+A -1.420881 -0.678947  0.533885  0.743974
+B  2.225050  0.117181  0.244615 -0.177299
+C -0.405730  0.781775  0.353478 -0.207279
+D -1.079697 -0.123070 -0.390982  1.255174
+E  0.947126 -1.022311  1.167168 -0.571977
+...
+W         X         Y         Z
+E  0.947126 -1.022311  1.167168 -0.571977
+
+W         X         Y         Z
+B  2.225050  0.117181  0.244615 -0.177299
+E  0.947126 -1.022311  1.167168 -0.571977
+#+end_example
+
+*** Index
+- reset_index to set index to numbers, old index are placed in a new column 'index'
+- set_index changes which column is the index, over writes old index, can not get it back
+- inplace set to True to make it stick
+#+begin_src python :session
+df = pd.DataFrame(randn(5,4), ['A', 'B', 'C', 'D', 'E'], ['W', 'X','Y','Z'])
+df
+df.reset_index()
+df
+#df.reset_index(inplace=True)
+
+newind = 'CA NY WY OR CO'.split()
+newind
+
+df = pd.DataFrame(randn(5,4), ['A', 'B', 'C', 'D', 'E'], ['W', 'X','Y','Z'])
+df['States']=newind
+df
+df.set_index('States')
+df
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+W         X         Y         Z
+A -2.017719  0.540541 -1.442299 -1.608850
+B -1.006569 -0.257534  0.730507 -1.698401
+C  1.674076  1.163724 -0.132574 -0.290246
+D -0.953532  0.588041  0.068801  1.412064
+E -0.686216  0.547944 -0.036383 -0.847016
+index         W         X         Y         Z
+0     A -2.017719  0.540541 -1.442299 -1.608850
+1     B -1.006569 -0.257534  0.730507 -1.698401
+2     C  1.674076  1.163724 -0.132574 -0.290246
+3     D -0.953532  0.588041  0.068801  1.412064
+4     E -0.686216  0.547944 -0.036383 -0.847016
+W         X         Y         Z
+A -2.017719  0.540541 -1.442299 -1.608850
+B -1.006569 -0.257534  0.730507 -1.698401
+C  1.674076  1.163724 -0.132574 -0.290246
+D -0.953532  0.588041  0.068801  1.412064
+E -0.686216  0.547944 -0.036383 -0.847016
+['CA', 'NY', 'WY', 'OR', 'CO']
+          W         X         Y         Z States
+A  1.902304  0.279605  0.620255 -1.068568     CA
+B -0.722621  0.084140 -0.584455  0.602022     NY
+C  0.438365 -0.782343  0.192936  0.004025     WY
+D -0.164075 -1.148812 -0.835509  0.210451     OR
+E  1.013985 -0.970198  1.217182  0.182647     CO
+W         X         Y         Z
+States                                        
+CA      1.902304  0.279605  0.620255 -1.068568
+NY     -0.722621  0.084140 -0.584455  0.602022
+WY      0.438365 -0.782343  0.192936  0.004025
+OR     -0.164075 -1.148812 -0.835509  0.210451
+CO      1.013985 -0.970198  1.217182  0.182647
+W         X         Y         Z States
+A  1.902304  0.279605  0.620255 -1.068568     CA
+B -0.722621  0.084140 -0.584455  0.602022     NY
+C  0.438365 -0.782343  0.192936  0.004025     WY
+D -0.164075 -1.148812 -0.835509  0.210451     OR
+E  1.013985 -0.970198  1.217182  0.182647     CO
+#+end_example
+
 ** Data Frames 3
+*** Multi Index and Hierarchy
+- You can have as many layers are you want
+- xs is a cross section of rows or columns from multi level index data frame
+#+begin_src python :session
+outside = ['G1', 'G1', 'G1', 'G2', 'G2', 'G2']
+inside = [1,2,3,1,2,3]
+hier_index = list(zip(outside, inside)) # list of tuple pairs [('G1', 1'), ('G1',2).....
+hier_index = pd.MultiIndex.from_tuples(hier_index)
+hier_index
+
+df = pd.DataFrame(randn(6,2), hier_index, ['A', 'B'])
+df
+df.loc['G1']
+print('\n')
+df.loc['G1'].iloc[1]
+df.index.names  # FrozenList([None, None]) means no names assigned
+df.index.names=['Groups', 'Num']
+df
+df.loc['G2'].loc[2]['B']
+df.xs('G1')
+df.xs(1, level='Num')
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+MultiIndex(levels=[['G1', 'G2'], [1, 2, 3]],
+           labels=[[0, 0, 0, 1, 1, 1], [0, 1, 2, 0, 1, 2]])
+             A         B
+G1 1 -1.269016  0.754876
+   2 -0.023908 -1.557542
+   3  0.346352  0.942364
+G2 1 -0.385477  1.560209
+   2  1.545162 -0.691688
+   3  0.864518 -2.097792
+A         B
+1 -1.269016  0.754876
+2 -0.023908 -1.557542
+3  0.346352  0.942364
+
+A   -0.023908
+B   -1.557542
+Name: 2, dtype: float64
+FrozenList([None, None])
+                   A         B
+Groups Num                    
+G1     1   -1.269016  0.754876
+       2   -0.023908 -1.557542
+       3    0.346352  0.942364
+G2     1   -0.385477  1.560209
+       2    1.545162 -0.691688
+       3    0.864518 -2.097792
+-0.69168765412456512
+A         B
+Num                    
+1   -1.269016  0.754876
+2   -0.023908 -1.557542
+3    0.346352  0.942364
+A         B
+Groups                    
+G1     -1.269016  0.754876
+G2     -0.385477  1.560209
+#+end_example
+
+
 ** Missing Data
 ** Group by
 ** Merging Joining Concatenating
