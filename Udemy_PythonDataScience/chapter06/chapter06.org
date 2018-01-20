@@ -490,9 +490,550 @@ G1     -1.269016  0.754876
 G2     -0.385477  1.560209
 #+end_example
 
-
 ** Missing Data
+- Often data is missing points, pandas will fill in with inf or NaN
+- We can drop them or fill them in
+- dropna
+- fillna
+#+begin_src python :session
+d = {'A':[1,2,np.nan], 'B':[5,np.nan, np.nan], 'C':[1,2,3]}
+d
+df = pd.DataFrame(d)
+df
+print('\n')
+df.dropna()       #row
+print('\n')
+df.dropna(axis=1) #columns
+print('\n')
+df.dropna(thresh=2) # this many non-NaN numbers to not get dropped
+print('\n')
+df.fillna(value='FILL VALUE')
+print('\n')
+df['A'].fillna(value=df['A'].mean())
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+{'B': [5, nan, nan], 'A': [1, 2, nan], 'C': [1, 2, 3]}
+     A    B  C
+0  1.0  5.0  1
+1  2.0  NaN  2
+2  NaN  NaN  3
+
+A    B  C
+0  1.0  5.0  1
+
+C
+0  1
+1  2
+2  3
+
+A    B  C
+0  1.0  5.0  1
+1  2.0  NaN  2
+
+A           B  C
+0           1           5  1
+1           2  FILL VALUE  2
+2  FILL VALUE  FILL VALUE  3
+
+0    1.0
+1    2.0
+2    1.5
+Name: A, dtype: float64
+#+end_example
+
 ** Group by
+- How to group rows of data together and call aggregate functions
+- Groupby allows you to group together rows based off of a column and perform aggregate functions on them
+- aggregate functions is any function that takes in multiple values and returns a single value like mean, std, etc...
+#+begin_src python :session
+data = {'Company':['GOOG','GOOG','MSFT','MSFT','FB','FB'],
+       'Person':['Sam','Charlie','Amy','Vanessa','Carl','Sarah'],
+       'Sales':[200,120,340,124,243,350]}
+data
+df = pd.DataFrame(data)
+df
+byCompany = df.groupby('Company')
+byCompany.mean()
+byCompany.std()
+byCompany.sum()
+byCompany.sum().loc['FB']
+byCompany.count()
+byCompany.max()
+byCompany.min()
+df.groupby('Company').describe().transpose()['FB']
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+{'Sales': [200, 120, 340, 124, 243, 350], 'Person': ['Sam', 'Charlie', 'Amy', 'Vanessa', 'Carl', 'Sarah'], 'Company': ['GOOG', 'GOOG', 'MSFT', 'MSFT', 'FB', 'FB']}
+  Company   Person  Sales
+0    GOOG      Sam    200
+1    GOOG  Charlie    120
+2    MSFT      Amy    340
+3    MSFT  Vanessa    124
+4      FB     Carl    243
+5      FB    Sarah    350
+         Sales
+Company       
+FB       296.5
+GOOG     160.0
+MSFT     232.0
+Sales
+Company            
+FB        75.660426
+GOOG      56.568542
+MSFT     152.735065
+Sales
+Company       
+FB         593
+GOOG       320
+MSFT       464
+Sales    593
+Name: FB, dtype: int64
+Person  Sales
+Company               
+FB            2      2
+GOOG          2      2
+MSFT          2      2
+Person  Sales
+Company                
+FB         Sarah    350
+GOOG         Sam    200
+MSFT     Vanessa    340
+Person  Sales
+Company                
+FB          Carl    243
+GOOG     Charlie    120
+MSFT         Amy    124
+Sales  count      2.000000
+       mean     296.500000
+       std       75.660426
+       min      243.000000
+       25%      269.750000
+       50%      296.500000
+       75%      323.250000
+       max      350.000000
+Name: FB, dtype: float64
+#+end_example
+
 ** Merging Joining Concatenating
+*** Concatenating
+- Concatenation basically glues together DataFrames. Keep in mind that dimensions should match along the axis you are concatenating on. You can use pd.concat and pass in a list of DataFrames to concatenate together:
+- Make sure information lines up correctly or you get a lot of NaN\
+- Joining columns is more common
+#+begin_src python :session
+df1 = pd.DataFrame({'A': ['A0', 'A1', 'A2', 'A3'],
+                        'B': ['B0', 'B1', 'B2', 'B3'],
+                        'C': ['C0', 'C1', 'C2', 'C3'],
+                        'D': ['D0', 'D1', 'D2', 'D3']},
+                        index=[0, 1, 2, 3])
+
+df2 = pd.DataFrame({'A': ['A4', 'A5', 'A6', 'A7'],
+                        'B': ['B4', 'B5', 'B6', 'B7'],
+                        'C': ['C4', 'C5', 'C6', 'C7'],
+                        'D': ['D4', 'D5', 'D6', 'D7']},
+                         index=[4, 5, 6, 7]) 
+df3 = pd.DataFrame({'A': ['A8', 'A9', 'A10', 'A11'],
+                        'B': ['B8', 'B9', 'B10', 'B11'],
+                        'C': ['C8', 'C9', 'C10', 'C11'],
+                        'D': ['D8', 'D9', 'D10', 'D11']},
+                        index=[8, 9, 10, 11])
+
+df1
+df2
+df3
+pd.concat([df1,df2,df3])
+pd.concat([df1,df2,df3],axis=1)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+    A   B   C   D
+0  A0  B0  C0  D0
+1  A1  B1  C1  D1
+2  A2  B2  C2  D2
+3  A3  B3  C3  D3
+A   B   C   D
+4  A4  B4  C4  D4
+5  A5  B5  C5  D5
+6  A6  B6  C6  D6
+7  A7  B7  C7  D7
+A    B    C    D
+8    A8   B8   C8   D8
+9    A9   B9   C9   D9
+10  A10  B10  C10  D10
+11  A11  B11  C11  D11
+A    B    C    D
+0    A0   B0   C0   D0
+1    A1   B1   C1   D1
+2    A2   B2   C2   D2
+3    A3   B3   C3   D3
+4    A4   B4   C4   D4
+5    A5   B5   C5   D5
+6    A6   B6   C6   D6
+7    A7   B7   C7   D7
+8    A8   B8   C8   D8
+9    A9   B9   C9   D9
+10  A10  B10  C10  D10
+11  A11  B11  C11  D11
+A    B    C    D    A    B    C    D    A    B    C    D
+0    A0   B0   C0   D0  NaN  NaN  NaN  NaN  NaN  NaN  NaN  NaN
+1    A1   B1   C1   D1  NaN  NaN  NaN  NaN  NaN  NaN  NaN  NaN
+2    A2   B2   C2   D2  NaN  NaN  NaN  NaN  NaN  NaN  NaN  NaN
+3    A3   B3   C3   D3  NaN  NaN  NaN  NaN  NaN  NaN  NaN  NaN
+4   NaN  NaN  NaN  NaN   A4   B4   C4   D4  NaN  NaN  NaN  NaN
+5   NaN  NaN  NaN  NaN   A5   B5   C5   D5  NaN  NaN  NaN  NaN
+6   NaN  NaN  NaN  NaN   A6   B6   C6   D6  NaN  NaN  NaN  NaN
+7   NaN  NaN  NaN  NaN   A7   B7   C7   D7  NaN  NaN  NaN  NaN
+8   NaN  NaN  NaN  NaN  NaN  NaN  NaN  NaN   A8   B8   C8   D8
+9   NaN  NaN  NaN  NaN  NaN  NaN  NaN  NaN   A9   B9   C9   D9
+10  NaN  NaN  NaN  NaN  NaN  NaN  NaN  NaN  A10  B10  C10  D10
+11  NaN  NaN  NaN  NaN  NaN  NaN  NaN  NaN  A11  B11  C11  D11
+#+end_example
+
+*** Merging
+- The merge function allows you to merge DataFrames together using a similar logic as merging SQL Tables together. For example:
+- similar to merging sql tables, defaults to "inner" learn about outer, left and right
+- Merge "on" a key column that they share
+#+begin_src python :session
+left = pd.DataFrame({'key': ['K0', 'K1', 'K2', 'K3'],
+                     'A': ['A0', 'A1', 'A2', 'A3'],
+                     'B': ['B0', 'B1', 'B2', 'B3']})
+   
+right = pd.DataFrame({'key': ['K0', 'K1', 'K2', 'K3'],
+                          'C': ['C0', 'C1', 'C2', 'C3'],
+                          'D': ['D0', 'D1', 'D2', 'D3']})   
+
+left
+right
+pd.merge(left, right)
+print('\n\n')
+
+left = pd.DataFrame({'key1': ['K0', 'K0', 'K1', 'K2'],
+                     'key2': ['K0', 'K1', 'K0', 'K1'],
+                        'A': ['A0', 'A1', 'A2', 'A3'],
+                        'B': ['B0', 'B1', 'B2', 'B3']})
+    
+right = pd.DataFrame({'key1': ['K0', 'K1', 'K1', 'K2'],
+                               'key2': ['K0', 'K0', 'K0', 'K0'],
+                                  'C': ['C0', 'C1', 'C2', 'C3'],
+                                  'D': ['D0', 'D1', 'D2', 'D3']})
+
+left
+print('\n')
+right
+print('\n')
+pd.merge(left, right, on=['key1', 'key2'])
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+    A   B key
+0  A0  B0  K0
+1  A1  B1  K1
+2  A2  B2  K2
+3  A3  B3  K3
+C   D key
+0  C0  D0  K0
+1  C1  D1  K1
+2  C2  D2  K2
+3  C3  D3  K3
+A   B key   C   D
+0  A0  B0  K0  C0  D0
+1  A1  B1  K1  C1  D1
+2  A2  B2  K2  C2  D2
+3  A3  B3  K3  C3  D3
+
+    A   B key1 key2
+0  A0  B0   K0   K0
+1  A1  B1   K0   K1
+2  A2  B2   K1   K0
+3  A3  B3   K2   K1
+
+C   D key1 key2
+0  C0  D0   K0   K0
+1  C1  D1   K1   K0
+2  C2  D2   K1   K0
+3  C3  D3   K2   K0
+
+A   B key1 key2   C   D
+0  A0  B0   K0   K0  C0  D0
+1  A2  B2   K1   K0  C1  D1
+2  A2  B2   K1   K0  C2  D2
+#+end_example
+
+*** Joining
+- Joining is a convenient method for combining the columns of two potentially differently-indexed DataFrames into a single result DataFrame.
+- like merge but keys on index and not a column
+#+begin_src python :session
+left = pd.DataFrame({'A': ['A0', 'A1', 'A2'],
+                     'B': ['B0', 'B1', 'B2']},
+                      index=['K0', 'K1', 'K2']) 
+
+right = pd.DataFrame({'C': ['C0', 'C2', 'C3'],
+                    'D': ['D0', 'D2', 'D3']},
+                      index=['K0', 'K2', 'K3'])
+
+print('\n\n')
+left
+print('\n')
+right
+print('\n')
+left.join(right)
+print('\n')
+left.join(right, how='outer')
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+>>>
+A   B
+K0  A0  B0
+K1  A1  B1
+K2  A2  B2
+
+C   D
+K0  C0  D0
+K2  C2  D2
+K3  C3  D3
+
+A   B    C    D
+K0  A0  B0   C0   D0
+K1  A1  B1  NaN  NaN
+K2  A2  B2   C2   D2
+
+A    B    C    D
+K0   A0   B0   C0   D0
+K1   A1   B1  NaN  NaN
+K2   A2   B2   C2   D2
+K3  NaN  NaN   C3   D3
+#+end_example
+
 ** Operations
+*** Finding Unique Values
+#+begin_src python :session
+df = pd.DataFrame({'col1':[1,2,3,4],'col2':[444,555,666,444],'col3':['abc','def','ghi','xyz']})
+df.head()
+df['col2'].unique()
+df['col2'].nunique()  # number of unique cells
+df['col2'].value_counts() # how often each unique values occurred
+#+end_src 
+
+#+RESULTS:
+#+begin_example
+
+col1  col2 col3
+0     1   444  abc
+1     2   555  def
+2     3   666  ghi
+3     4   444  xyz
+array([444, 555, 666])
+3
+444    2
+555    1
+666    1
+Name: col2, dtype: int64
+#+end_example
+
+*** Selecting Data
+- apply method takes a function and applies it to each data cell
+- works with lambd expressions
+#+begin_src python :session
+def times2(x):
+    return x*2
+#+end_src
+
+#+RESULTS:
+
+
+#+begin_src python :session
+df[(df['col1']>2) & (df['col2']==444)]
+df['col1'].sum()
+df['col1'].apply(times2)
+df['col3'].apply(len)
+df['col2'].apply(lambda x:x*2)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+col1  col2 col3
+3     4   444  xyz
+10
+0    2
+1    4
+2    6
+3    8
+Name: col1, dtype: int64
+0    3
+1    3
+2    3
+3    3
+Name: col3, dtype: int64
+0     888
+1    1110
+2    1332
+3     888
+Name: col2, dtype: int64
+#+end_example
+
+*** Removing Columns
+-
+#+begin_src python :session
+df.drop('col1', axis=1)
+df.columns
+df.index
+df.sort_values('col2') # index stays in right spot
+df.isnull()
+#+end_src
+
+#+RESULTS:
+#+begin_example
+col2 col3
+0   444  abc
+1   555  def
+2   666  ghi
+3   444  xyz
+Index(['col1', 'col2', 'col3'], dtype='object')
+RangeIndex(start=0, stop=4, step=1)
+col1  col2 col3
+0     1   444  abc
+3     4   444  xyz
+1     2   555  def
+2     3   666  ghi
+col1   col2   col3
+0  False  False  False
+1  False  False  False
+2  False  False  False
+3  False  False  False
+#+end_example
+
+*** Pivot Table
+- Create a multi-index out of a data frame
+
+#+begin_src python :session
+data = {'A':['foo','foo','foo','bar','bar','bar'],
+     'B':['one','one','two','two','one','one'],
+       'C':['x','y','x','y','x','y'],
+       'D':[1,3,2,5,4,1]}
+
+df = pd.DataFrame(data)
+df
+print('\n\n')
+df.pivot_table(values='D', index=['A','B'], columns='C')
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+     A    B  C  D
+0  foo  one  x  1
+1  foo  one  y  3
+2  foo  two  x  2
+3  bar  two  y  5
+4  bar  one  x  4
+5  bar  one  y  1
+
+C          x    y
+A   B            
+bar one  4.0  1.0
+    two  NaN  5.0
+foo one  1.0  3.0
+    two  2.0  NaN
+#+end_example
+
 ** Data Input and Output
+- install sqlalchemy, lxml, html5lib, BeautifulSoup4
+- pd.read_XXX many different formats!
+*** Excel and CSV Files
+- can only import data from excel not formulas or images or other features
+- work book is a bunch of sheets and each sheet is a data frame
+#+begin_src python :session
+df = pd.read_csv("../CourseMaterial/Python-Data-Science-and-Machine-Learning-Bootcamp/Python-Data-Science-and-Machine-Learning-Bootcamp/Python-for-Data-Analysis/Pandas/example")
+df
+#df.to_csv('my_output.csv', index=True) 
+df.to_csv('my_output.csv', index=False) # don't save index as a column
+pd.read_excel("../CourseMaterial/Python-Data-Science-and-Machine-Learning-Bootcamp/Python-Data-Science-and-Machine-Learning-Bootcamp/Python-for-Data-Analysis/Pandas/Excel_Sample.xlsx", sheetnamne="Sheet1")
+df.to_excel("ExcelSample2.xlsx", sheet_name="Example")  # notice different spelling of sheet_name vs sheetname
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+a   b   c   d
+0   0   1   2   3
+1   4   5   6   7
+2   8   9  10  11
+3  12  13  14  15
+    a   b   c   d
+0   0   1   2   3
+1   4   5   6   7
+2   8   9  10  11
+3  12  13  14  15
+#+end_example
+*** HTML
+- Creates a list, turns data tables into list
+#+begin_src python :session
+data = pd.read_html("https://www.fdic.gov/bank/individual/failed/banklist.html")
+#+end_src
+
+
+#+begin_src python :session
+data[0].head()
+#+end_src
+
+
+#+RESULTS:
+#+begin_example
+Bank Name         City  ST   CERT  \
+0                Washington Federal Bank for Savings      Chicago  IL  30570   
+1    The Farmers and Merchants State Bank of Argonia      Argonia  KS  17719   
+2                                Fayette County Bank   Saint Elmo  IL   1802   
+3  Guaranty Bank, (d/b/a BestBank in Georgia & Mi   Milwaukee  WI  30003   
+4                                     First NBC Bank  New Orleans  LA  58302   
+
+                 Acquiring Institution       Closing Date       Updated Date  
+0                   Royal Savings Bank  December 15, 2017  December 20, 2017  
+1                          Conway Bank   October 13, 2017   October 20, 2017  
+2            United Fidelity Bank, fsb       May 26, 2017      July 26, 2017  
+3  First-Citizens Bank & Trust Company        May 5, 2017      July 26, 2017  
+4                         Whitney Bank     April 28, 2017   December 5, 2017
+#+end_example
+*** SQL
+- Pandas is not best at this, other libraries are better at dealing with different SQL and server flavors
+- Use the right driver library (psycopg2, etc...)
+#+begin_src python :session
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///:memory:')  # put sql engine in RAM
+#+end_src
+
+
+#+begin_src python :session
+df.to_sql('my_table',engine)  # engine is a connection
+sqldf = pd.read_sql("my_table", con=engine)
+sqldf
+#+end_src
+
+
+#+RESULTS:
+:    index   a   b   c   d
+: 0      0   0   1   2   3
+: 1      1   4   5   6   7
+: 2      2   8   9  10  11
+: 3      3  12  13  14  15
+** SF Salaries Exercise
+
+#+begin_src python
+import pandas as pd
+sal = pd.read_csv("../CourseMaterial/Python-Data-Science-and-Machine-Learning-Bootcamp/Python-Data-Science-and-Machine-Learning-Bootcamp/Python-for-Data-Analysis/Pandas/Pandas Exercises/Salaries.csv")
+sal
+#+end_src
+
+#+RESULTS:
+
